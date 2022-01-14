@@ -1,6 +1,6 @@
 # pandoc-lecturenotes
 
-This is a set of filters for producing slides (for Deckset) and notes with embedded slides (for formatting with **ms** or LaTeX) from a single (Markdown) document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight.
+This is a set of filters for producing slides (for [Deckset](https://www.deckset.com/)) and notes with embedded slides (for formatting with **ms** or LaTeX) from a single (Markdown) document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight.
 
 Within the document, slides are contained in blocks with the class `slide` like this:
 
@@ -17,11 +17,23 @@ Prefix the author of the quote with `--`, or leave it out if it's anonymous.
 :::
 ```
 
-The content of the slide blocks is in Deckset’s Markdown variant, with extensions.
+The content of the slide blocks is in Deckset’s Markdown variant, with some extensions and some limitations.
 
 For producing slides, use the `deckset-slides.lua` filter with `commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars` as target format.  If you use citeproc, add the `deckset-post-citeproc.lua` filter **after** the `--citeproc` option.
 
-For producing notes for formatting with **ms** or LaTeX, use the `embed-slides.lua` filter.
+For producing notes with embedded slides for formatting with **ms** or LaTeX, use the `embed-slides.lua` filter.
+
+You can exclude slides from the notes by adding the `presentation` class, for example:
+
+```
+::: {.slide .presentation}
+Presentation only
+:::
+```
+
+You can exclude all slides from the notes by setting the `showslides` metadata field to `false`. 
+
+The `embed-slides.lua` filter aims to produce useful renderings of the slides, but obviously cannot reproduce everything that Deckset does, especially when it comes to images.
 
 Both filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
 
