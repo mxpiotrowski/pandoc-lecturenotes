@@ -1,5 +1,12 @@
 local meta;
 
+function Meta (el)
+   -- Copy the metadata and remove it from the document (Deckset
+   -- doesn't support any type of metadata header)
+   meta = el
+   return {} 
+end
+
 function Div (el)
    if el.identifier == 'refs' then
       local blocks = {}
@@ -11,12 +18,22 @@ function Div (el)
 
       local biblist = pandoc.BulletList({})
          
-      pandoc.walk_block(el, { Div = function(el)
-                                 biblist.content:insert(el.content)
-      end })
-
+      -- A bibliography item produced by citeproc is a Div containing
+      -- a Para.  We iterate over the Paras, take their content, and
+      -- rewrap it in a Plain.  Directly inserting the Div or the Para
+      -- would make Pandoc output a "loose" list (with an empty line
+      -- between items), which is not formatted correctly by Deckset.
+      
+      pandoc.walk_block(el, {
+                           Para = function (para)
+                              biblist.content:insert(
+                                 { pandoc.Plain(para.content) }
+                              )
+                           end
+      })
+      
       table.insert(blocks, biblist)
-
+      
       return blocks
    end
 end
@@ -24,25 +41,18 @@ end
 function Header (el)
    -- This header is automatically inserted when using the
    -- reference-section-title option.  Remove this header, we handle
-   -- this ourselves abov in Div().
+   -- this ourselves above in Div().
 
    if el.identifier == 'bibliography' then
       return {}
    end
 end
 
-function Meta (el)
-   -- Copy the metadata and remove it from the document (Deckset
-   -- doesn't support any type of metadata header)
-   meta = el
-   return {} 
-end
-
 --- Change order of processing: grab metadata first, because we need
 --- it in Div() to build the title slide.
 
 return {
-   { Meta = Meta },  -- (1)
-   { Div = Div },     -- (2)
+   { Meta = Meta },
+   { Div = Div },
    { Header = Header },
 }
