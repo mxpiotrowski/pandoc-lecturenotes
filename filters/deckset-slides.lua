@@ -24,7 +24,7 @@ function Pandoc(doc)
    
    -- [TODO] logo/background image
    -- table.insert(hblocks, pandoc.RawBlock('markdown', '![](graphics/close_encounters-02.jpg)'))
-   table.insert(hblocks, pandoc.RawBlock('markdown', '![left 100% inline](graphics/unilogo_blanc_300dpi.png)'))
+   table.insert(hblocks, pandoc.RawBlock('markdown', '![left 100% inline](graphics/logo.png)'))
    
    table.insert(hblocks, pandoc.Header(1, doc.meta.title))
 
@@ -34,60 +34,63 @@ function Pandoc(doc)
 
    table.insert(hblocks, pandoc.Header(4, doc.meta.date))
 
-   if doc.meta.author.t == 'MetaInlines' then
-      -- Single author name
-      table.insert(hblocks, pandoc.Para(doc.meta.author))
-   else
-      for i, entry in pairs(doc.meta.author) do
-         if entry.t == 'MetaInlines' then
-            --  Simple list of author names
-            table.insert(hblocks, pandoc.Header(4, entry))
-         else
-            --[[ Structured author information as produced by the
-               scholarly-metadata filter
-               <https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata>
+   if doc.meta.author then
+      if pandoc.utils.type(doc.meta.author) == 'Inlines' then
 
-               The complexity is mind-boggling, or probably I'm too dumb.
+         -- Single author name
+         table.insert(hblocks, pandoc.Para(doc.meta.author))
+      else
+         for i, entry in pairs(doc.meta.author) do
+            if pandoc.utils.type(entry) == 'Inlines' then
+               --  Simple list of author names
+               table.insert(hblocks, pandoc.Header(4, entry))
+            else
+               --[[ Structured author information as produced by the
+                  scholarly-metadata filter
+                  <https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata>
 
-               We try to handle zero or more affiliations and zero or
-               more e-mail addresses per author.  ]]--
+                  The complexity is mind-boggling, or probably I'm too dumb.
 
-            -- Affiliations
-            local aff = {}
-            local aff_str = ''
-            
-            for a, b in pairs(entry.institute) do
-               table.insert(aff,
-                            pandoc.utils.stringify(
-                               doc.meta.institute[tonumber(b)].name))
-            end
+                  We try to handle zero or more affiliations and zero or
+                  more e-mail addresses per author.  ]]--
 
-            if #aff > 0 then
-               aff_str = '(' .. table.concat(aff, '; ') .. ')'
-            end
-
-            -- E-mail addresses
-            local eml = {}
-            local eml_str = ' '
-
-            if entry.email then
-               for a, b in pairs(entry.email) do
-                  table.insert(eml, pandoc.utils.stringify(b))
+               -- Affiliations
+               local aff = {}
+               local aff_str = ''
+               
+               for a, b in pairs(entry.institute) do
+                  table.insert(aff,
+                               pandoc.utils.stringify(
+                                  doc.meta.institute[tonumber(b)].name))
                end
 
-               eml_str = table.concat(eml, '; ')
+               if #aff > 0 then
+                  aff_str = '(' .. table.concat(aff, '; ') .. ')'
+               end
+
+               -- E-mail addresses
+               local eml = {}
+               local eml_str = ' '
+
+               if entry.email then
+                  for a, b in pairs(entry.email) do
+                     table.insert(eml, pandoc.utils.stringify(b))
+                  end
+
+                  eml_str = table.concat(eml, '; ')
+               end
+               
+               table.insert(hblocks,
+                            pandoc.Header(4,
+                                          {
+                                             pandoc.utils.stringify(entry.name),
+                                             ' ',
+                                             aff_str,
+                                             pandoc.RawInline('markdown', '<br>'),
+                                             pandoc.Code(
+                                                (pandoc.utils.stringify(eml_str)))
+               }))
             end
-            
-            table.insert(hblocks,
-                         pandoc.Header(4,
-                                       {
-                                          pandoc.utils.stringify(entry.name),
-                                          ' ',
-                                          aff_str,
-                                          pandoc.RawInline('markdown', '<br>'),
-                                          pandoc.Code(
-                                             (pandoc.utils.stringify(eml_str)))
-            }))
          end
       end
    end
