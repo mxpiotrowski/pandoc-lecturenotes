@@ -561,7 +561,16 @@ Image grids would be very hard to convert to LaTeX and ms; we would first need t
 ![inline fill](graphics/image1.jpg)
 :::
 
-One problem, however, is that not all images may fit onto the page.  A workaround for LaTeX output is to add a Pandoc size attribute, which is removed by the Deckset filter.
+One problem, however, is that not all images may fit onto the page.  A workaround for LaTeX output is to add a Pandoc size attribute, which is removed by the Deckset filter, e.g.:
+
+```
+::: slide
+# Image Grids (test for LaTeX output)
+
+![inline fill](graphics/image2.jpg){width=30%}![inline fill](graphics/image3.jpg){width=30%}  
+![inline fill](graphics/image1.jpg){width=30%}
+:::
+```
 
 ## Videos
 
@@ -681,14 +690,105 @@ This slide has a customized presenter note.
 ^ This is a presenter note.
 :::
 
-::: slide
-# Image Credits
+# Additional Features
 
-`image1.jpg`: Photo by [Gabriel Garcia Marengo](https://unsplash.com/@gabrielgm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
-  
-`image2.jpg`: Photo by [Mark de Jong](https://unsplash.com/@mrmarkdejong?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+## Per-Slide Commands as Attributes
 
-`image3.jpg`: Photo by [Nolan Krattinger](https://unsplash.com/@odes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/unil?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+Instead of using Deckset’s per-slide commands such as `[.slidenumbers=false]`, you can specify them as attributes of the `slide` block, e.g.:
 
-`video1.mp4`: Davidmoerike, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lausanne-metro2-Ouchy.ogv)
+```
+::: {.slide slidenumbers=false footer="A different footer"}
+```
+
+::: {.slide slidenumbers=false footer="A different footer"}
+This slide has a different footer and no slide number.
 :::
+
+Global attributes can be specified as metadata, e.g., in the YAML block:
+
+```
+slidenumbers: true
+```
+
+## Bibliographic References
+
+You can use bibliographic references on the slides and in the notes.  The bibliography on the slides will list only those references that appear on the slides.  For example, the following quotation from @Klaus1966a is not on a slide, so the reference will not appear in the bibliography:
+
+::: {lang=de}
+> Die Maschine ist zwar nur das anorganische Produkt des Menschen, eine Form der Rückwirkung des Menschen auf die anorganische Natur, gleichzeitig ist sie damit aber auch ein Stück seiner umgestalteten Umwelt und insofern ein Bestandteil der menschlichen Welt. Der Mensch paßt sich seiner Umgebung an. Aber er paßt seine Umgebung zugleich auch bewußt seinen menschlichen Bedürfnissen an. Dieses Verhalten unterscheidet den Menschen wesentlich vom Tier, das seine Umwelt nur zufällig und unbewußt umgestaltet. Zwischen Mensch und Maschine besteht ein wechselseitiger Anpassungsprozeß, bei dem der Mensch grundsätzlich und im ganzen gesehen die primäre Rolle spielt; er spielt diese Rolle jedoch nicht in jeder Beziehung. Zwar schafft er die Maschine, um seine eigenen Unzulänglichkeiten im Kampf mit der Natur zu überwinden oder zum Teil auszugleichen, die relativen Unvollkommenheiten der von ihm geschaffenen Mittel muß er aber seinerseits wieder mit spezifisch menschlichen Mitteln kompensieren. Einmal geschaffen, unterwirft sich daher die Maschine, von der technischen Seite her gesehen, in gewisser Hinsicht auch den Menschen.
+> [@Klaus1966a, 119]
+:::
+
+On the other hand, the references on the following slides will be listed on the bibliography slide:
+
+::: slide
+# The Hyperreal
+
+> Aujourd’hui l’abstraction n’est plus celle de la carte, du double, du miroir ou du concept. La simulation n’est plus celle d’un territoire, d’un être référentiel, d'une substance. Elle est la génération par les modèles d'un réel sans origine ni réalité : hyperréel.  
+> -- @Baudrillard1981 [10]
+:::
+
+For notes, the bibliography section lists all references that appear either in the notes or in the embedded slides.
+
+::: slide
+
+![left](graphics/image1.jpg)
+
+# [Geräteentfremdung]{lang=de}
+
+@Klaus1961 coins the term [*Geräteentfremdung*]{lang=de}.
+:::
+
+## Controlling Image Attributes on Embedded Slides
+
+Deckset does not support attributes, so the filter strips them off.  This can be used to control the size of images for embedded slides (which are automatically scaled by Deckset).
+
+::: slide
+# Image Grids
+
+![inline fill](graphics/image2.jpg){width=30%}![inline fill](graphics/image3.jpg){width=30%}  
+![inline fill](graphics/image1.jpg){width=30%}
+:::
+
+## Customization for Embedded Slides
+
+When generating LaTeX output, embedded slides are wrapped in an `embed-slide` environment, which is by default defined as a new tcolorbox environment using `\newtcolorbox`.  It can be customized by redefining this environment using `\renewtcolorbox`.
+
+Slide headers are wrapped in a `\slideheader` macro with two arguments, the header level and the content.  This allows the user to customize the appearance by redefining the macro in `header-Includes`.  For example:
+
+```
+   header-includes: |
+       ```{=latex}
+       \renewcommand{\slideheader}[2]{%
+       \textsc{%
+         \ifcase#1\relax
+         \or\Large%
+         \or\large%
+         \or\bfseries%
+         \fi%
+         #2}
+       }
+       ```
+```
+
+## Showing and Hiding Content
+
+A slide with the class `presentation` will not appear in the notes:
+
+```
+::: {.slide .presentation}
+Presentation only
+:::
+```
+
+If the metadata option `showslides` is false, all slides will be excluded from the notes.
+
+# Credits
+
+- `image1.jpg`: Photo by [Gabriel Garcia Marengo](https://unsplash.com/@gabrielgm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
+  
+- `image2.jpg`: Photo by [Mark de Jong](https://unsplash.com/@mrmarkdejong?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+
+- `image3.jpg`: Photo by [Nolan Krattinger](https://unsplash.com/@odes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/unil?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+
+- `video1.mp4`: Davidmoerike, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lausanne-metro2-Ouchy.ogv)
