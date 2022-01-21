@@ -37,5 +37,9 @@ The `embed-slides.lua` filter aims to produce useful renderings of the slides, b
 
 Both filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
 
+## Formatting `sample.md`
+
+Do `make sample-deckset.md` to produce the slides version of `sample.md`, `make sample-latex.pdf` to produce a LaTeX-formatted PDF version, and `make sample-ms.pdf` for the groff-formatted PDF version (note that the version of groff shipped with macOS is too old for Pandoc).
+
 © 2022 by Michael Piotrowski <mxp@dynalabs.de>
 
