@@ -54,9 +54,12 @@ function format_slides (elem)
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
             elseif (el.t == "Para" and
-                    string.match(pandoc.utils.stringify(el),
-                                 '^%[%.column]%s*$')) then
+                    string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
+               -- Handle the Deckset [.column] command
                table.insert(result, pandoc.HorizontalRule())
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
+               ; -- Don't output Deckset per-slide commands
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
                     and el.c[1].format == 'html') then
                -- Deckset uses HTML syntax for defining anchors.  We
