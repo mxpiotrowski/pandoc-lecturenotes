@@ -8,13 +8,25 @@ geometry: margin=2.5cm
 shownotes: true
 colorlinks: true
 reference-section-title: "Bibliography"
-footer: "pandoc-lecturenotes"
+footer: |
+    `Use *emphasis* and ~~other~~ text styles if you like`
 slidenumbers: true
 subtitle: "Generating lectures and notes from a single document"
 showslides: true
+logo: "graphics/logo.png"
+titlegraphic: "graphics/image1.jpg"
+theme: Fira, 3
+footer-style: #2F2F2F, alignment(right), line-height(8), text-scale(1.5), Avenir Next Regular
 ---
 
 # Deckset Features
+
+Here we reproduce most of the examples from the [Deckset documentation](https://docs.deckset.com/).  When using the `deckset-slides.lua` filter, the content of slides is *not* simply output verbatim, but it is parsed and reserialized by Pandoc.  The examples thus serve to verify
+
+1. that Deckset’s features can be used on slides and
+2. that they are reasonably reproduced on embedded slides.
+
+Note that the goal is *not* that embedded slides *look* like Deckset would format them; this would be pointless.  The goal is rather that they are embedded in a way that is useful.  There are obviously a few limitations; some things simply cannot be reproduced in static media.
 
 ## Headings
 
@@ -106,6 +118,8 @@ Combining underscores with asterisks lets us mix and match the emphasis styles. 
 # The same *styles* work in **headings**, too.
 :::
 
+Deckset uses `<sup>…</sup>` and `<sub>…</sub>` for superscripts and subscripts; this is passed through to slides, but not translated when the slides are embedded.  We recommend to use Pandoc notation (`^…^` and `~…~`) instead.
+
 ::: slide
 # More Styles
 
@@ -116,6 +130,10 @@ Combining underscores with asterisks lets us mix and match the emphasis styles. 
 :::
 
 ## Quotes
+
+One of the main benefits of using Pandoc is that we can use real bibliographic references; see the section on [bibliographic references](#bibliographic-references) below.
+
+To make sure that blockquotes are rendered correctly, make sure there is a “hard line break” before the attribution by ending the previous line with two or more spaces.
 
 ::: slide
 > The best way to predict the future is to invent it  
@@ -144,7 +162,13 @@ In case you're looking for something, you could use [Google](http://google.com) 
 Links will be clickable in exported PDFs as well!
 :::
 
-In addition to HTML syntax, we also support (and prefer) an ID attribute on the slide div.  Anchors are exported to Deckset, LaTeX, and ms. 
+In addition to HTML syntax, we also support (and prefer) an ID attribute on the slide div, for example:
+
+```
+::: {.slide #link-target}
+```
+
+Anchors are exported to Deckset, LaTeX, and ms. 
 
 ::: slide
 # Links Between Slides
@@ -176,7 +200,7 @@ $.ajax({
 ```
 :::
 
-We support `[.code-highlight: …]` but prefer attributes on the slide div.
+We support `[.code-highlight: …]` but prefer attributes on the slide div.  This is not translated to LaTeX and ms.
 
 ::: slide
 # Highlight Lines of Code
@@ -222,7 +246,7 @@ $.ajax({
 ```
 :::
 
-This currently doesn’t work if each `[.code-highlight: …]` isn’t a paragraph on its own.  Either put each command in its own paragraph or use attributes on the slide div instead (preferred).
+This is not translated to LaTeX and ms.
 
 ::: slide
 # Step through Highlighted Lines of Code
@@ -246,6 +270,8 @@ $.ajax({
 });
 ```
 :::
+
+Automatic scaling is not supported in LaTeX or ms.
 
 ::: slide
 # Automatic Scaling
@@ -320,6 +346,8 @@ You can also include Formulas in paragraph text. Deckset takes care of adjusting
 The slope $$a$$ of the line defined by the function $$f(x) = 2x$$ is $$a = 2$$.
 :::
 
+There is no “autoscaling” in LaTeX or ms; TeX and eqn will do whatever they do in such cases.
+
 ::: slide
 # Formula Autoscaling
 
@@ -348,34 +376,25 @@ Please refer to this [Emoji Reference Markdown file](http://deckset-assets.s3.am
 
 ## Footers and Slide Numbers
 
-To add a persistent footer to each slide of your presentation, insert the following command at the *top* of your file:
+To globally enable or disable slide numbers and to set a footer on slides, use the following metadata keys (e.g., in the YAML header):
+
+- `slidenumbers` (`true` or `false`)
+- `footer`
+
+To include formatting in the footer, use the following approach to ensure it gets through Pandoc:
 
 ```
-footer: Your footer goes here
+footer: |
+    `Use *emphasis* and ~~other~~ text styles if you like`
 ```
 
-To add running slide numbers to each slide of your presentation, insert the following command at the *top* of your file:
+If you want to disable footers or slide numbers on individual slides, you can do so by using per slide commands (see below).
 
-```
-slidenumbers: true
-```
-
-When combining the two commands, please make sure that there are *no empty lines* between the two.
-
-```
-footer: Your footer goes here
-slidenumbers: true
-```
-
-You can use standard text styles such as emphasis in your footer text, just as you would in other places too.
-
-```
-footer: Use *emphasis* and ~~other~~ text styles if you like
-```
-
-If you want to disable footers or slide numbers on individual slides, you can do so by using per slide commands.
+All these settings are ignored for embedded slides.
 
 ## Footnotes
+
+You can have footnotes on slides and in the notes, but since this is really *one* document, no duplicate identifiers are allowed (the number to be displayed is chosen by Deckset or the formatter anyway).  The footnote text does not need to be on the slide, but can be anywhere.
 
 ::: slide
 # Footnotes
@@ -390,10 +409,10 @@ Note that footnote references have to be *unique in the markdown file*. This mea
 
 :::
 
-Named references with spaces are not supported by Pandoc, but they are not useful anyway, as we have real citations.
+Named references with spaces are *not* supported by Pandoc, but they are not useful anyway, as we have real citations.  You can use named references [as long as they do not contain spaces, tabs, or newlines](https://pandoc.org/MANUAL.html#footnotes).
 
 ::: slide
-# Named References
+# Named References (Unsupported)
 
 Instead of just numbers, you can also name your footnote references[^Wiles, 1995].
 
@@ -402,6 +421,8 @@ Instead of just numbers, you can also name your footnote references[^Wiles, 1995
 :::
 
 ## Controlling Line Breaks
+
+The `deckset-slides.lua` filter converts soft line breaks into hard ones to enable the behavior shown on the next slide.  The `embed-slides.lua` filter does not do this.  Both filters support `<br>`.
 
 ::: slide
 # Controlling Line Breaks
@@ -421,6 +442,8 @@ You can use the HTML tag `<br>` to insert line breaks in elements that cannot co
 
 ## Auto-Scaling
 
+As for the other global options described [above](#footers-and-slide-numbers), the `autoscale` option goes into the metadata instead.  It does not have an effect on embedded slides.
+
 ::: slide
 # Auto-Scaling
 
@@ -435,7 +458,7 @@ on the first line of your markdown file.
 
 ## Columns
 
-This works in Deckset, but converting this to LaTeX or ms would probably be a major effort.
+Converting this to LaTeX or ms would be a major effort.  Instead, columns are rendered vertically.
 
 ::: slide
 # Columns
@@ -474,9 +497,9 @@ Fit Background Image
 ![fit](graphics/image1.jpg)
 :::
 
-Multiple Background Images.  Deckset doesn’t require that each image is a separate paragraph, but this is the same issue as with multiple per slide commands—so, for Pandoc, insert a newline between them.
+Multiple Background Images.  Deckset doesn’t require that each image is a separate paragraph, but this is the same issue as with multiple per-slide commands—so, for Pandoc, insert a newline between them.
 
-Also, this doesn’t easily convert to LaTeX or ms—this is essentially the same problem as with multiple columns.
+Also, this does not easily convert to LaTeX or ms—this is essentially the same problem as with multiple columns.
 
 ::: slide
 ![](graphics/image1.jpg)
@@ -518,7 +541,7 @@ Use the `filtered` keyword to apply the theme's filter to an image that isn't fi
 # Zoom In
 :::
 
-This works in LaTeX.
+Split slides are to some extent rendered in LaTeX.
 
 ::: slide
 ![right fit](graphics/image1.jpg)
@@ -652,8 +675,6 @@ Control audio playback by using one of those directives:
 
 ## Presenter Notes
 
-Using presenter notes
-
 Deckset turns every paragraph that starts with a `^` into presenter notes and doesn’t show this text on the slides.
 
 You’ll see these notes on the presenter display (with two screens connected) or by using the rehearsal mode.
@@ -669,6 +690,8 @@ Example:
 
 ^ This is a presenter note.
 :::
+
+Presenter notes are not shown for embedded slides.
 
 ### Customize the display of presenter notes
 
@@ -692,9 +715,38 @@ This slide has a customized presenter note.
 
 # Additional Features
 
+## Title Slide
+
+A title slide is automatically generated by the `deckset-slides.lua` filter using information from the metadata (title, subtitle, date, author); if the `scholarly-metadata.lua` filter is used, affiliations and e-mail addresses are also added.
+
+You can specify an image file name in the metadata option `logo` to insert the following code above the text (here for the file name `graphics/logo.png`); the image will be displayed in the top left side of the title slide:
+
+```
+![left 100% inline](graphics/logo.png)
+```
+
+You can specify an image file name in the metadata option `titlegraphic` to insert the following code above the text (here for the file name `graphics/image1.jpg`); this will appear as background image of the title slide:
+
+```
+![](graphics/image1.jpg)
+```
+
+Both options can be used together.
+
+Footer, slide numbers and slide count are turned off for the title slide.
+
+## Global Configuration Commands as Metadata Options
+
+As already mentioned above, you can specify [global configuration commands for Deckset](https://docs.deckset.com/English.lproj/Customization/01-configuration-commands.html) as metadata options, e.g.,
+
+```
+theme: Fira, 3
+slidenumbers: true
+```
+
 ## Per-Slide Commands as Attributes
 
-Instead of using Deckset’s per-slide commands such as `[.slidenumbers=false]`, you can specify them as attributes of the `slide` block, e.g.:
+Instead of using [Deckset’s per-slide commands](https://docs.deckset.com/English.lproj/Customization/01-configuration-commands.html) such as `[.slidenumbers=false]`, you can specify them as attributes of the `slide` block, e.g.:
 
 ```
 ::: {.slide slidenumbers=false footer="A different footer"}
@@ -704,15 +756,23 @@ Instead of using Deckset’s per-slide commands such as `[.slidenumbers=false]`,
 This slide has a different footer and no slide number.
 :::
 
-Global attributes can be specified as metadata, e.g., in the YAML block:
+This also applies to the custom theming options (see the [Deckset documentation](https://docs.deckset.com/English.lproj/Customization/02-custom-theming.html), for example:
 
 ```
-slidenumbers: true
+::: {.slide background-color=#FF0000}
+A slide with a red background
+:::
 ```
+
+::: {.slide background-color=#FF0000}
+# A slide with a red background
+:::
+
+All of these options are ignored for embedded slides.
 
 ## Bibliographic References
 
-You can use bibliographic references on the slides and in the notes.  The bibliography on the slides will list only those references that appear on the slides.  For example, the following quotation from @Klaus1966a is not on a slide, so the reference will not appear in the bibliography:
+With citeproc, you can use bibliographic references on the slides and in the notes.  When generating Deckset slides, add the `deckset-post-citeproc.lua` filter *after* the `--citeproc` option.  The bibliography on the slides will list only those references that appear on slides.  For example, the following quotation from @Klaus1966a is not on a slide, so the reference will not appear in the bibliography:
 
 ::: {lang=de}
 > Die Maschine ist zwar nur das anorganische Produkt des Menschen, eine Form der Rückwirkung des Menschen auf die anorganische Natur, gleichzeitig ist sie damit aber auch ein Stück seiner umgestalteten Umwelt und insofern ein Bestandteil der menschlichen Welt. Der Mensch paßt sich seiner Umgebung an. Aber er paßt seine Umgebung zugleich auch bewußt seinen menschlichen Bedürfnissen an. Dieses Verhalten unterscheidet den Menschen wesentlich vom Tier, das seine Umwelt nur zufällig und unbewußt umgestaltet. Zwischen Mensch und Maschine besteht ein wechselseitiger Anpassungsprozeß, bei dem der Mensch grundsätzlich und im ganzen gesehen die primäre Rolle spielt; er spielt diese Rolle jedoch nicht in jeder Beziehung. Zwar schafft er die Maschine, um seine eigenen Unzulänglichkeiten im Kampf mit der Natur zu überwinden oder zum Teil auszugleichen, die relativen Unvollkommenheiten der von ihm geschaffenen Mittel muß er aber seinerseits wieder mit spezifisch menschlichen Mitteln kompensieren. Einmal geschaffen, unterwirft sich daher die Maschine, von der technischen Seite her gesehen, in gewisser Hinsicht auch den Menschen.
@@ -739,6 +799,8 @@ For notes, the bibliography section lists all references that appear either in t
 @Klaus1961 coins the term [*Geräteentfremdung*]{lang=de}.
 :::
 
+The title for the bibliography can be controlled using the `reference-section-title` metadata option, as usual.
+
 ## Controlling Image Attributes on Embedded Slides
 
 Deckset does not support attributes, so the filter strips them off.  This can be used to control the size of images for embedded slides (which are automatically scaled by Deckset).
@@ -750,7 +812,7 @@ Deckset does not support attributes, so the filter strips them off.  This can be
 ![inline fill](graphics/image1.jpg){width=30%}
 :::
 
-## Customization for Embedded Slides
+## Customizing the Rendering of Embedded Slides
 
 When generating LaTeX output, embedded slides are wrapped in an `embed-slide` environment, which is by default defined as a new tcolorbox environment using `\newtcolorbox`.  It can be customized by redefining this environment using `\renewtcolorbox`.
 
@@ -783,7 +845,7 @@ Presentation only
 
 If the metadata option `showslides` is false, all slides will be excluded from the notes.
 
-# Credits
+# Image and Video Credits
 
 - `image1.jpg`: Photo by [Gabriel Garcia Marengo](https://unsplash.com/@gabrielgm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
   
@@ -792,3 +854,4 @@ If the metadata option `showslides` is false, all slides will be excluded from t
 - `image3.jpg`: Photo by [Nolan Krattinger](https://unsplash.com/@odes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/unil?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
 - `video1.mp4`: Davidmoerike, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lausanne-metro2-Ouchy.ogv)
+

@@ -18,13 +18,26 @@ function Pandoc(doc)
    table.insert(hblocks, ds_global)
 
    -- Create title slide
-
    table.insert(hblocks, pandoc.RawBlock('markdown',
                                          '[.hide-footer]\n[.slidenumbers: false]\n[.slidecount: false]'))
    
-   -- [TODO] logo/background image
-   -- table.insert(hblocks, pandoc.RawBlock('markdown', '![](graphics/close_encounters-02.jpg)'))
-   table.insert(hblocks, pandoc.RawBlock('markdown', '![left 100% inline](graphics/logo.png)'))
+   --Logo/background image
+   if doc.meta.titlegraphic then
+      table.insert(hblocks,
+                   pandoc.RawBlock('markdown', '![]('
+                                   .. pandoc.utils.stringify(doc.meta.titlegraphic)
+                                   .. ')')
+      )
+      table.insert(hblocks, pandoc.Para({}))
+   end
+   
+   if doc.meta.logo then
+      table.insert(hblocks,
+                   pandoc.RawBlock('markdown', '![left 100% inline]('
+                                   .. pandoc.utils.stringify(doc.meta.logo)
+                                   .. ')')
+      )
+   end
    
    table.insert(hblocks, pandoc.Header(1, doc.meta.title))
 
@@ -132,6 +145,8 @@ function Pandoc(doc)
             local str = pandoc.utils.stringify(e)
 
             if (e.t == "Para" and str:match('^%[%.[-%a]+')) then
+               str=str:gsub('%[%.', '\n[.')
+
                table.insert(hblocks, pandoc.RawBlock('markdown', str .. '\n'))
             else
                table.insert(hblocks, e)
@@ -164,10 +179,7 @@ function Span (el)
 end
 
 function SoftBreak (el)
-   -- Replace "soft" line breaks (within a paragraph) with explicit
-   -- ones.  It seems that this is what the hard_line_breaks extension
-   -- is supposed to do, but it dosn't work for me.
-   return pandoc.RawInline('markdown', '<br>')
+   return pandoc.LineBreak()
 end
 
 function Meta (el)

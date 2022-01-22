@@ -244,8 +244,17 @@ function hide_unsupported_media (el)
    end
 end
 
+function handle_tags (el)
+   if el.format == 'html' and el.text == '<br>' then
+      return pandoc.LineBreak()
+   end
+end
+
+      
+
 return {
    { Meta  = add_setup_code },
    { Image = hide_unsupported_media },
    { Div   = format_slides },
+   {RawInline = handle_tags}
 }
