@@ -15,6 +15,10 @@ function Div (el)
       table.insert(blocks,
                    pandoc.Header(1, meta['reference-section-title']
                                  or "References"))
+      -- Make sure the list of references is left-aligned and uses a
+      -- plain bullet (could be made customizable)
+      table.insert(blocks, pandoc.RawBlock(FORMAT, '[.autoscale: true]\n'
+                                           .. '[.list: alignment(left), bullet-character(•)]'))
 
       local biblist = pandoc.BulletList({})
          
