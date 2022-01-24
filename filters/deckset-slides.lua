@@ -110,6 +110,33 @@ function Pandoc(doc)
 
    -- Regular slides
 
+   local ds_per_slide = pandoc.List({
+         "autoscale",
+         "background-color",
+         "build-lists",
+         "code",
+         "code-highlight",
+         "footer",
+         "footer-style",
+         "footnote-separator",
+         "formula",
+         "header",
+         "header-emphasis",
+         "header-strong",
+         "list",
+         "quote",
+         "quote-author",
+         "slide-transition",
+         "slidecount",
+         "slidenumber-style",
+         "slidenumbers",
+         "table",
+         "table-separator",
+         "text",
+         "text-emphasis",
+         "text-strong",
+   })
+   
    for i, el in pairs(doc.blocks) do
       if (el.t == "Div" and el.classes:includes("slide")) then
          table.insert(hblocks, pandoc.HorizontalRule())
@@ -127,7 +154,9 @@ function Pandoc(doc)
             local commands = ""
             
             for key, val in pairs(el.attributes) do
-               commands = commands .. string.format('[.%s: %s]\n', key, val)
+               if ds_per_slide:includes(key, 1) then
+                  commands = commands .. string.format('[.%s: %s]\n', key, val)
+               end
             end
 
             table.insert(hblocks, pandoc.RawBlock('markdown', commands))
