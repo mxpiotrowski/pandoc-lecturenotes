@@ -788,6 +788,10 @@ On the other hand, the references on the following slides will be listed on the 
 > -- @Baudrillard1981 [10]
 :::
 
+The list of references is left-aligned and uses an em-dash as bullet to make sure it works even for fancy themes. The bullet can be customized using the `bibliography-bullet` metadata option.
+
+The `autoscale` option is set for the bibliography slide, but if there are too many references, it will probably become unreadable.  The bibliography is currently limited to a single slide.
+
 For notes, the bibliography section lists all references that appear either in the notes or in the embedded slides.
 
 ::: slide
