@@ -175,7 +175,7 @@ function add_setup_code (meta)
       meta['header-includes'] = pandoc.MetaBlocks({})
    end
 
-   local header_includes = meta['header-includes']
+   local header_includes = { meta['header-includes'] }
    local setup_code = ''
 
    if FORMAT:match 'latex' then
