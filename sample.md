@@ -735,6 +735,22 @@ Both options can be used together.
 
 Footer, slide numbers and slide count are turned off for the title slide.
 
+## Alerted text
+
+The `deckset-slides.lua` filter converts spans with the class *alert* to Deckset-style combined emphasis (currently `_**…**_`); according to the Deckset documentation, “some themes have additional style options for those combinations.”
+
+::: slide
+# Alerted Text
+
+It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
+:::
+
+::: slide
+# Alerted Text in a Quotation
+
+> It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
+:::
+
 ## Global Configuration Commands as Metadata Options
 
 As already mentioned above, you can specify [global configuration commands for Deckset](https://docs.deckset.com/English.lproj/Customization/01-configuration-commands.html) as metadata options, e.g.,

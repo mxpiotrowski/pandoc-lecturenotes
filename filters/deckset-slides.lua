@@ -202,9 +202,32 @@ function Image (el)
    return pandoc.Image(el.caption, el.src)
 end
 
+function Div (el)
+   -- Remove all divs that are not slides
+   if not el.classes:includes("slide") then
+      return el.content
+   end
+end
+
+fooFunc = {
+   Str = function (s)
+      return s.text
+   end
+}
+
 function Span (el)
-   -- Replace spans (not supported by Deckset) with their content
-   return el.content
+   if el.classes:includes("alert") then
+      -- Replace spans with the "alert" class (think Beamer) with
+      -- Deckset-style "combined emphasis" markup (which may or may not be
+      -- different from regular bold or italics).
+      table.insert(el.content, 1, pandoc.RawInline('markdown', '_**'))
+      table.insert(el.content, pandoc.RawInline('markdown', '**_'))
+      return el.content
+      
+   else
+      -- Otherwise, replace spans (not supported by Deckset) with their content
+      return el.content
+   end
 end
 
 function SoftBreak (el)
