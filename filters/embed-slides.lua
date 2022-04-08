@@ -37,6 +37,7 @@ function format_slides (elem)
                -- table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
 
                -- [fit] is a Deckset command
+               -- [FIXME] delete the space after "[fit]"
                if el.content[1] == pandoc.Str('[fit]') then
                   el.content[1] = pandoc.Str('')
                end
@@ -190,7 +191,7 @@ function add_setup_code (meta)
   valign=top, title={#2}, #1}
 \newcounter{slidectr}\setcounter{slidectr}{1}
 \newcommand{\slideheader}[2]{%
-  \textsf{%
+  \raggedright\textsf{%
     \ifcase#1\relax%
     \or\Large%
     \or\large%
