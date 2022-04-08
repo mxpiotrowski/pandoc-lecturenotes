@@ -37,11 +37,15 @@ function format_slides (elem)
                -- table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
 
                -- [fit] is a Deckset command
-               -- [FIXME] delete the space after "[fit]"
                if el.content[1] == pandoc.Str('[fit]') then
-                  el.content[1] = pandoc.Str('')
+                  table.remove(el.content, 1)
                end
-               
+
+               -- Delete leading space
+               if el.content[1].t == "Space" then
+                  table.remove(el.content, 1)
+               end
+
                -- Wrap the header content in a LaTeX command, which
                -- can be customized if desired.
                table.insert(el.content, 1,
