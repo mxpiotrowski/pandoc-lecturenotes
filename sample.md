@@ -863,6 +863,24 @@ Presentation only
 :::
 ```
 
+The class `presentation` can also be added to individual images (e.g., decorative backgrounds) to prevent their inclusion in the notes:
+
+```
+::: slide
+![](graphics/image1.png){.presentation}
+
+> [L]es humanités numériques recouvrent un ensemble de pratiques de recherche à l’intersection des technologies numériques et des différentes disciplines des sciences humaines.  
+-- Dacos, M., & Mounier, P. (2014). Humanités numériques.
+:::
+```
+
+::: slide
+![](graphics/image1.png){.presentation}
+
+> [L]es humanités numériques recouvrent un ensemble de pratiques de recherche à l’intersection des technologies numériques et des différentes disciplines des sciences humaines.  
+-- Dacos, M., & Mounier, P. (2014). Humanités numériques.
+:::
+
 If the metadata option `showslides` is false, all slides will be excluded from the notes.
 
 # Image and Video Credits

@@ -224,6 +224,10 @@ function hide_unsupported_media (el)
    local patterns = {'^http', '%.mov$', '%.mp4$', '%.au$', '%.wav$',
                      '%.mp3$', '%.m4a$', '%.ogg$', '%.flac$',}
    local replacement = 'Audio, video, or Web resource'
+
+   if el.classes:includes('presentation')  then
+      return {}
+   end
    
    for _, pat in pairs(patterns) do
       if el.src:match(pat) then
