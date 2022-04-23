@@ -78,7 +78,7 @@ function Pandoc(doc)
                end
 
                if #aff > 0 then
-                  aff_str = '(' .. table.concat(aff, '; ') .. ')'
+                  aff_str = table.concat(aff, '; ')
                end
 
                -- E-mail addresses
@@ -97,9 +97,9 @@ function Pandoc(doc)
                             pandoc.Header(4,
                                           {
                                              pandoc.utils.stringify(entry.name),
-                                             ' ',
+                                             pandoc.RawInline('markdown', '<br>*'),
                                              aff_str,
-                                             pandoc.RawInline('markdown', '<br>'),
+                                             pandoc.RawInline('markdown', '*<br>'),
                                              pandoc.Code(
                                                 (pandoc.utils.stringify(eml_str)))
                }))
