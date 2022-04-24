@@ -238,7 +238,9 @@ function hide_unsupported_media (el)
          if FORMAT:match 'latex' then
             return {
                pandoc.RawInline('latex',
-                                '\\tcbox{' .. replacement .. ': \\texttt{'),
+                                '\\tcbox{' .. replacement .. ': \\href{'),
+               pandoc.Str(el.src),
+               pandoc.RawInline('latex', '}{'),
                pandoc.Str(filename),
                pandoc.RawInline('latex', '}}\n')
             }
