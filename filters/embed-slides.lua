@@ -201,7 +201,8 @@ function add_setup_code (meta)
     \or\large%
     \or\bfseries%
     \fi%
-    #2}}
+    #2}%
+  \vspace{\baselineskip}}
       ]]
 
       setup_code = '% Added by ' .. PANDOC_SCRIPT_FILE .. '\n' .. setup_code
