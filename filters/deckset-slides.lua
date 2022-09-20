@@ -33,7 +33,7 @@ function Pandoc(doc)
    
    if doc.meta.logo then
       table.insert(hblocks,
-                   pandoc.RawBlock('markdown', '![left 100% inline]('
+                   pandoc.RawBlock('markdown', '![left fit inline]('
                                    .. pandoc.utils.stringify(doc.meta.logo)
                                    .. ')')
       )
