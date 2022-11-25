@@ -81,6 +81,10 @@ function Pandoc(doc)
                   aff_str = table.concat(aff, '; ')
                end
 
+               if #aff_str > 0 then
+                  aff_str= pandoc.Emph {aff_str}
+               end
+               
                -- E-mail addresses
                local eml = {}
                local eml_str = ' '
@@ -97,12 +101,14 @@ function Pandoc(doc)
                             pandoc.Header(4,
                                           {
                                              pandoc.utils.stringify(entry.name),
-                                             pandoc.RawInline('markdown', '<br>*'),
-                                             aff_str,
-                                             pandoc.RawInline('markdown', '*<br>'),
+                                             pandoc.RawInline('markdown', '<br>'),
+                                             (aff_str.content and aff_str or ""),
+                                             (aff_str.content and pandoc.RawInline('markdown', '<br>') or ""),
                                              pandoc.Code(
                                                 (pandoc.utils.stringify(eml_str)))
-               }))
+                                          }
+                            )
+               )
             end
          end
       end
