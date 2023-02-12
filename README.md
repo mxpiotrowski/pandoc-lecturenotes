@@ -23,6 +23,8 @@ For producing slides, use the `deckset-slides.lua` filter with `commonmark+footn
 
 For producing notes with embedded slides for formatting with **ms** or LaTeX, use the `embed-slides.lua` filter.
 
+⚠ Starting with [Pandoc 3.0](https://pandoc.org/releases.html#pandoc-3.0-2023-01-18), the `implicit_figures` extension generates nodes of the new `Figure` type.  This is a major change that breaks the `embed-slide.lua` filter; you currently **must** turn off this extension when producing lecture notes, e.g., by specifying `-f markdown-implicit_figures`.  The `deckset-slides.lua` filter has been adapted and should work with or without `implicit_figures`.
+
 You can exclude slides from the notes by adding the `presentation` class, for example:
 
 ```

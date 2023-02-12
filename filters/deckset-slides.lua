@@ -203,6 +203,10 @@ function Header (el)
    return pandoc.Header(el.level, el.content)
 end
 
+function Figure (el)
+   return el.content[1]
+end
+
 function Image (el)
    -- Remove classes and attributes from images (not supported by Deckset)
    return pandoc.Image(el.caption, el.src)
