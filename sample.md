@@ -93,7 +93,7 @@ Note that the goal is *not* that embedded slides *look* like Deckset would forma
 
 Use single asterisks around text to *emphasise it*.
 
-Or use double asterisks for an **strong emphasis** style.
+Or use double asterisks for a **strong emphasis** style.
 :::
 
 ::: slide
@@ -737,18 +737,22 @@ Footer, slide numbers and slide count are turned off for the title slide.
 
 ## Alerted text
 
-The `deckset-slides.lua` filter converts spans with the class *alert* to Deckset-style combined emphasis (currently `_**…**_`); according to the Deckset documentation, “some themes have additional style options for those combinations.”
+The `deckset-slides.lua` filter converts spans with the class *alert* to Deckset-style combined emphasis (currently `_**…**_`).  According to the Deckset documentation, “some themes have additional style options for those combinations.”  Thus, depending on the theme, alerted text may or may not be actually highlighted.
 
 ::: slide
 # Alerted Text
 
 It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
+
+(Depending on the theme, the passage “they remain fundamentally unresolvable” may or may not be highlighted.)
 :::
 
 ::: slide
 # Alerted Text in a Quotation
 
 > It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
+
+(Depending on the theme, the passage “they remain fundamentally unresolvable” may or may not be highlighted.)
 :::
 
 ## Global Configuration Commands as Metadata Options
@@ -800,8 +804,10 @@ On the other hand, the references on the following slides will be listed on the 
 ::: slide
 # The Hyperreal
 
+:::: {lang=fr}
 > Aujourd’hui l’abstraction n’est plus celle de la carte, du double, du miroir ou du concept. La simulation n’est plus celle d’un territoire, d’un être référentiel, d'une substance. Elle est la génération par les modèles d'un réel sans origine ni réalité : hyperréel.  
 > -- @Baudrillard1981 [10]
+::::
 :::
 
 The list of references is left-aligned and uses an em-dash as bullet to make sure it works even for fancy themes. The bullet can be customized using the `bibliography-bullet` metadata option.
@@ -867,18 +873,23 @@ The class `presentation` can also be added to individual images (e.g., decorativ
 
 ```
 ::: slide
-![](graphics/image1.png){.presentation}
+![](graphics/image1.jpg){.presentation}
 
-> [L]es humanités numériques recouvrent un ensemble de pratiques de recherche à l’intersection des technologies numériques et des différentes disciplines des sciences humaines.  
--- Dacos, M., & Mounier, P. (2014). Humanités numériques.
+:::: {lang=de}
+> Die Philosophen haben die Welt nur verschieden interpretirt; es kommt aber darauf an,
+> sie zu verändern.  
+-- Karl Marx
+::::
 :::
 ```
 
 ::: slide
-![](graphics/image1.png){.presentation}
+![](graphics/image1.jpg){.presentation}
 
-> [L]es humanités numériques recouvrent un ensemble de pratiques de recherche à l’intersection des technologies numériques et des différentes disciplines des sciences humaines.  
--- Dacos, M., & Mounier, P. (2014). Humanités numériques.
+:::: {lang=de}
+> Die Philosophen haben die Welt nur verschieden interpretirt; es kommt aber darauf an, sie zu verändern.  
+-- Karl Marx
+::::
 :::
 
 If the metadata option `showslides` is false, all slides will be excluded from the notes.
