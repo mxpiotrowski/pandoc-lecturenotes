@@ -1,7 +1,7 @@
 BIB=references.bib
 
 %-deckset.md: sample.md
-	pandoc -s \
+	pandoc -s -f markdown-implicit_figures \
 	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars \
 	-o $@ \
 	--wrap=none \
@@ -12,14 +12,14 @@ BIB=references.bib
 	$<
 
 %-latex.pdf: %.md
-	pandoc -s -t pdf -o $@ \
+	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
 	--number-sections \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=xelatex $<
 
 %-ms.pdf: %.md
-	pandoc -s -t pdf -o $@ \
+	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
 	--number-sections \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} \
