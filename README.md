@@ -37,6 +37,14 @@ Presentation only
 
 You can exclude all slides from the notes by setting the `showslides` metadata field to `false`. 
 
+You can exclude images (and currently *only* images) from slides by adding the `lecturenotes` class, for example:
+
+```
+![](https://youtu.be/…){.lecturenotes}
+```
+
+This can be used to explicitly use different images for the presentation and the lecture notes.  But you can also use it, for example, to have Deckset include a video from the filesystem (so you don’t depend on a network connection for the presentation) and to include a YouTube link on the lecture notes.
+
 The `embed-slides.lua` filter aims to produce useful renderings of the slides, but obviously cannot reproduce everything that Deckset does, especially when it comes to images.
 
 Both filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).

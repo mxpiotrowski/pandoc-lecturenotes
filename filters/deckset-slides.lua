@@ -208,8 +208,13 @@ function Figure (el)
 end
 
 function Image (el)
-   -- Remove classes and attributes from images (not supported by Deckset)
-   return pandoc.Image(el.caption, el.src)
+   if el.classes:includes('lecturenotes')  then
+      -- Exclude images with the .lecturenotes class.
+      return {}
+   else
+      -- Remove classes and attributes from images (not supported by Deckset)
+      return pandoc.Image(el.caption, el.src)
+   end
 end
 
 function Div (el)
