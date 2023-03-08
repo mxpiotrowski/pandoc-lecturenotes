@@ -23,20 +23,14 @@ function Pandoc(doc)
    
    --Logo/background image
    if doc.meta.titlegraphic then
-      table.insert(hblocks,
-                   pandoc.RawBlock('markdown', '![]('
-                                   .. pandoc.utils.stringify(doc.meta.titlegraphic)
-                                   .. ')')
-      )
       table.insert(hblocks, pandoc.Para({}))
+      table.insert(hblocks, pandoc.Image({},
+                      pandoc.utils.stringify(doc.meta.titlegraphic)))
    end
    
    if doc.meta.logo then
-      table.insert(hblocks,
-                   pandoc.RawBlock('markdown', '![left fit inline]('
-                                   .. pandoc.utils.stringify(doc.meta.logo)
-                                   .. ')')
-      )
+      table.insert(hblocks, pandoc.Image({pandoc.Str('left fit inline')},
+                      pandoc.utils.stringify(doc.meta.logo)))
    end
    
    table.insert(hblocks, pandoc.Header(1, doc.meta.title))
