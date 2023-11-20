@@ -190,7 +190,7 @@ function add_setup_code (meta)
       setup_code = [[
 \usepackage{tcolorbox}
 \newtcolorbox{embed-slide}[2][]{%
-  colframe=Apricot, colback=Apricot!8!white,
+  colframe=orange, colback=orange!8!white,
   fonttitle=\footnotesize\sffamily\bfseries,
   valign=top, title={#2}, #1}
 \newcounter{slidectr}\setcounter{slidectr}{1}
