@@ -1,0 +1,56 @@
+/*
+https://blog.webdevsimplified.com/2022-08/css-viewport-units/
+https://matthewjamestaylor.com/2-column-layouts
+https://stackoverflow.com/questions/42239778/items-that-span-all-columns-rows-using-css-grid-layout
+https://css-tricks.com/snippets/css/complete-guide-grid/
+https://verpex.com/blog/website-tips/modern-layouts-using-css-grid
+*/
+
+body {
+    margin: 0 auto;
+    max-width: 36em;
+    padding: 50px;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+}
+
+article.embed-slide {
+    border: 2px dotted #3E2A22;
+    height: fit-content;
+}
+
+.slide {
+    border: 1px solid #3E2A22;
+    background-color: #C68996;
+    box-sizing: border-box;
+    /* display: grid; */
+
+    /* grid-template-columns: 1fr 1fr; */
+    
+    /* grid-auto-flow: column; */
+    /* grid-auto-rows: min-content; */
+    /* grid-template-areas: "a a"; */
+
+    /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
+    /* grid-gap: 1rem; */
+}
+
+.slide p, div {
+    border: 1px solid gray;
+    border-radius: 1rem;
+}
+
+.slide img, video, embed {
+    /* max-height: 50vb; */
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.slide blockquote p::before {
+    content: '❝';
+    font-size: larger;
+    margin-left: -1em;
+    margin-right: 0.25em;
+}

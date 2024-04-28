@@ -651,7 +651,7 @@ Audio is replaced with a placeholder in LaTeX and ms output.
 
 To add audio files to your presentation, add them to your Markdown like so:
 
-![](~/lib/audio/pacman.au)
+![](media/pacman.au)
 
 Your operating system’s file type icon will be used as a visual representation of the audio file.
 :::
@@ -695,7 +695,7 @@ Presenter notes are not shown for embedded slides.
 
 ### Customize the display of presenter notes
 
-To customize the style of presenter notes, in both Presenter and Rehearsal modes and in exported documents, you may use the `presenter-not command like so:
+To customize the style of presenter notes, in both Presenter and Rehearsal modes and in exported documents, you may use the `presenter-notes` command like so:
 
 ```
 presenter-notes: text-scale(2), alignment(left|right|center), Helvetica

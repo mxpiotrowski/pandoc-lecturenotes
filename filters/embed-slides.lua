@@ -155,6 +155,87 @@ function format_slides (elem)
          end
          
          add_raw_block(result, FORMAT, '.LP\n.B2')
+      elseif FORMAT:match 'html' then
+         -- [TODO] For HTML we could probably mostly keep the Pandoc
+         -- AST elements and only make some changes where necessary
+         add_raw_block(result, FORMAT, '<article class="embed-slide">')
+         add_raw_block(result, FORMAT, '<header>')
+         add_raw_block(result, FORMAT, '<p>Slide #</p>')
+         add_raw_block(result, FORMAT, '</header>')
+
+         add_raw_block(result, FORMAT, '<section class="slide">')
+         
+         for i, el in pairs(elem.content) do
+            if el.t == "Header" then
+               -- [fit] is a Deckset command
+               if el.content[1] == pandoc.Str('[fit]') then
+                  table.remove(el.content, 1)
+               end
+
+               -- Delete leading space
+               if el.content[1].t == "Space" then
+                  table.remove(el.content, 1)
+               end
+
+               table.insert(result, el)
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%^ ')) then
+               ; -- Don't output presenter notes
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
+               -- Handle the Deckset [.column] command
+               table.insert(result, pandoc.HorizontalRule())
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
+               ; -- Don't output Deckset per-slide commands
+            elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "Image") then
+               -- [FIXME] It's possible to have paras that contain several images…
+               --[[ This may result from Deckset image grids like
+
+                  ![left](graphics/N_Wirth-cropped.jpg){height=25%}
+                  ![right](graphics/Wirth1976.jpg){height=25%}
+
+                  But we may also have something like:
+
+                  ![inline](graphics/swift-claim-with-shadow.png){.presentation}
+                  ![](graphics/swift-claim.png){.lecturenotes height=25%}
+
+                  Check whether a paragraph contains *only* images?
+               ]]
+
+               
+               -- if el.c[1].caption and
+               --    string.match(pandoc.utils.stringify(el.c[1].caption), 'right') then
+               --    add_raw_block(result, FORMAT, '\\tcblower')
+               --    result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
+               -- end
+
+               -- Unset the title to prevent the creation of a figure
+               -- and insert the element.
+               el.c[1].title = ''
+               el.c[1].attributes['height'] = ''
+               el.c[1].attributes['width'] = ''
+               table.insert(result, el)
+
+               -- The same as above, but for images with the "left"
+               -- option.  In this case, the image should be the first
+               -- element on the slide.
+               -- if el.c[1].caption
+               --    and string.match(pandoc.utils.stringify(el.c[1].caption), 'left') then
+               --    add_raw_block(result, FORMAT, '\\tcblower')
+               --    result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
+               -- end
+            else
+               table.insert(result, el)
+
+   end
+            end
+
+         -- table.insert(result, elem)
+         add_raw_block(result, FORMAT, '</section>')
+         add_raw_block(result, FORMAT, '</article>')
+
+         -- table.insert(result, elem)
       end
       
       return result
