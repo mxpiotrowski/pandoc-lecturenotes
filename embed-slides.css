@@ -21,20 +21,26 @@ article.embed-slide {
     height: fit-content;
 }
 
+/* Single-column slide (contains no left or right images) */
 .slide {
     border: 1px solid #3E2A22;
     background-color: #C68996;
-    box-sizing: border-box;
-    /* display: grid; */
+    /* column-count: 2; */
+    /* column-width: 10em; */
+    /* column-rule: 1px solid gray; */
+}
 
-    /* grid-template-columns: 1fr 1fr; */
-    
-    /* grid-auto-flow: column; */
-    /* grid-auto-rows: min-content; */
-    /* grid-template-areas: "a a"; */
+/* Two-column slide (contains left or right images) */
+.slide:has(img.ds-right, img.ds-left) {
+    border: 1px solid blue;
+    background-color: lightblue;
+    column-count: 2;
+    column-width: 10em;
+    column-rule: 1px solid gray;
+}
 
-    /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
-    /* grid-gap: 1rem; */
+.rightimage {
+    break-before: column;
 }
 
 .slide p, div {
@@ -45,12 +51,63 @@ article.embed-slide {
 .slide img, video, embed {
     /* max-height: 50vb; */
     max-width: 100%;
-    object-fit: contain;
+}
+
+/* slide with 1 image only */
+p:only-child:has(img:only-child) {
+  border: 6px dashed red;
+  column-span: all;
+}
+
+/* image right */
+p:has(img:only-child.ds-right) {
+  border: 6px dashed green;
+  break-before: column;
+}
+
+/* image left */
+p:has(img:only-child.ds-left) {
+  border: 6px dashed green;
+  break-after: column;
+}
+
+/* image inline */
+p:has(img:only-child.ds-inline) {
+    background-color: yellow;
+    padding: 1rem;
+    column-span: all;
+}
+
+/* image grid */
+
+p:has(img + img:nth-child(2)) {
+    border: 6px solid violet;
+    background-color: pink;
+    display: grid;
+
+    img {
+        border: 3px dashed black;
+        max-height: 30vh;
+    }
+    
+    /* https://css-tricks.com/exploring-css-grids-implicit-grid-and-auto-placement-powers/ */
+    img:nth-child(3):last-child {
+        grid-column-start: span 2;
+    }
+    img:nth-child(4) {
+        grid-column-start: 2;
+    }
+}
+
+
+/* blockquote */
+
+.slide blockquote {
+    break-inside: avoid-column;
 }
 
 .slide blockquote p::before {
     content: '❝';
     font-size: larger;
-    margin-left: -1em;
     margin-right: 0.25em;
 }

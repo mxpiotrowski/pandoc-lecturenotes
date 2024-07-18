@@ -189,42 +189,17 @@ function format_slides (elem)
                     string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
                ; -- Don't output Deckset per-slide commands
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "Image") then
-               -- [FIXME] It's possible to have paras that contain several images…
-               --[[ This may result from Deckset image grids like
-
-                  ![left](graphics/N_Wirth-cropped.jpg){height=25%}
-                  ![right](graphics/Wirth1976.jpg){height=25%}
-
-                  But we may also have something like:
-
-                  ![inline](graphics/swift-claim-with-shadow.png){.presentation}
-                  ![](graphics/swift-claim.png){.lecturenotes height=25%}
-
-                  Check whether a paragraph contains *only* images?
-               ]]
-
+               if el.c[1].caption then
+                  if string.match(pandoc.utils.stringify(el.c[1].caption), 'right') then
+                     el.c[1].classes = {'ds-right'}
+                  elseif string.match(pandoc.utils.stringify(el.c[1].caption), 'left') then
+                     el.c[1].classes = {'ds-left'}
+                  elseif string.match(pandoc.utils.stringify(el.c[1].caption), 'inline') then
+                     el.c[1].classes = {'ds-inline'}
+                  end
+               end
                
-               -- if el.c[1].caption and
-               --    string.match(pandoc.utils.stringify(el.c[1].caption), 'right') then
-               --    add_raw_block(result, FORMAT, '\\tcblower')
-               --    result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
-               -- end
-
-               -- Unset the title to prevent the creation of a figure
-               -- and insert the element.
-               el.c[1].title = ''
-               el.c[1].attributes['height'] = ''
-               el.c[1].attributes['width'] = ''
                table.insert(result, el)
-
-               -- The same as above, but for images with the "left"
-               -- option.  In this case, the image should be the first
-               -- element on the slide.
-               -- if el.c[1].caption
-               --    and string.match(pandoc.utils.stringify(el.c[1].caption), 'left') then
-               --    add_raw_block(result, FORMAT, '\\tcblower')
-               --    result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
-               -- end
             else
                table.insert(result, el)
 
@@ -337,6 +312,14 @@ function hide_unsupported_media (el)
    end
 end
 
+function handle_codeblocks (el)
+   if el.classes:includes('presentation')  then
+      return {}
+   end
+
+   return nil
+end
+
 function handle_tags (el)
    if el.format == 'html' and el.text == '<br>' then
       return pandoc.LineBreak()
@@ -348,6 +331,7 @@ end
 return {
    { Meta  = add_setup_code },
    { Image = hide_unsupported_media },
+   { CodeBlock = handle_codeblocks },
    { Div   = format_slides },
-   {RawInline = handle_tags}
+   { RawInline = handle_tags }
 }

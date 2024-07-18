@@ -1,6 +1,6 @@
 BIB=references.bib
 
-%-deckset.md: sample.md filters/deckset-slides.lua
+%-deckset.md: %.md filters/deckset-slides.lua
 	pandoc -s -f markdown-implicit_figures \
 	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars \
 	-o $@ \
