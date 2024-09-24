@@ -869,7 +869,7 @@ Presentation only
 :::
 ```
 
-The class `presentation` can also be added to individual images (e.g., decorative backgrounds) to prevent their inclusion in the notes:
+The classes `presentation` and `lecturenotes` can also be added to individual images (e.g., decorative backgrounds) and code blocks to prevent their inclusion in the lecture notes or the slides, respectively:
 
 ```
 ::: slide

@@ -37,7 +37,7 @@ Presentation only
 
 You can exclude all slides from the notes by setting the `showslides` metadata field to `false`. 
 
-You can exclude images (and currently *only* images) from slides by adding the `lecturenotes` class, for example:
+You can exclude images and code blocks from slides by adding the `lecturenotes` class, for example:
 
 ```
 ![](https://youtu.be/…){.lecturenotes}
