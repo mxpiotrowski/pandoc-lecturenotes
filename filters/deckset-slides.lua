@@ -219,11 +219,16 @@ function Div (el)
    end
 end
 
-fooFunc = {
-   Str = function (s)
-      return s.text
+function Math (el)
+   -- Deckset uses $$…$$ for both inline and display math.
+
+   -- [TODO] This is a good example why a custom writer may be
+   -- cleaner: it works, but potential later filters will no longer
+   -- have access to InlineMath elements.
+   if el.mathtype == 'InlineMath' then
+      return pandoc.RawInline('markdown', '$$' .. el.text .. '$$')
    end
-}
+end
 
 function Span (el)
    if el.classes:includes("alert") then
