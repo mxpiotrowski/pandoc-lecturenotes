@@ -4,7 +4,7 @@ BIB=references.bib
 	pandoc -s -f markdown-implicit_figures \
 	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars \
 	-o $@ \
-	--wrap=none \
+	--wrap=none --strip-comments=true \
 	--bibliography=${BIB} \
 	-L filters/deckset-slides.lua \
 	--citeproc \
