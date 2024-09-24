@@ -117,6 +117,7 @@ function Pandoc(doc)
          "code",
          "code-highlight",
          "footer",
+         "hide-footer",
          "footer-style",
          "footnote-separator",
          "formula",
