@@ -33,5 +33,7 @@ BIB=references.bib
 	  --toc=true --citeproc --bibliography=${BIB} \
 	  -o $@ $<
 
+.PHONY: clean
+
 clean:
 	rm -f *-deckset.md *-{latex,ms}.pdf *.html *~
