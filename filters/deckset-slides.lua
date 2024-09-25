@@ -32,14 +32,18 @@ function Pandoc(doc)
       table.insert(hblocks, pandoc.Image({pandoc.Str('left fit inline')},
                       pandoc.utils.stringify(doc.meta.logo)))
    end
-   
-   table.insert(hblocks, pandoc.Header(1, doc.meta.title))
 
+   if doc.meta.title then
+      table.insert(hblocks, pandoc.Header(1, doc.meta.title))
+   end
+      
    if doc.meta.subtitle then
       table.insert(hblocks, pandoc.Header(2, doc.meta.subtitle))
    end
 
-   table.insert(hblocks, pandoc.Header(4, doc.meta.date))
+   if doc.meta.date then
+      table.insert(hblocks, pandoc.Header(4, doc.meta.date))
+   end
 
    if doc.meta.author then
       if pandoc.utils.type(doc.meta.author) == 'Inlines' then
