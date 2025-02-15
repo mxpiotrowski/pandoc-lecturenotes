@@ -217,6 +217,11 @@ function Image (el)
 end
 
 function Div (el)
+   -- Exclude divs with the .lecturenotes class.
+   if el.classes:includes("lecturenotes") then
+      return {}
+   end
+
    -- Remove all divs that are not slides
    if not el.classes:includes("slide") then
       return el.content
