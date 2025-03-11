@@ -735,6 +735,25 @@ Both options can be used together.
 
 Footer, slide numbers and slide count are turned off for the title slide.
 
+You can further customize the title slide using the `titleoptions` metadata option.  Key–value pairs specified in a YAML dictionary are inserted as configuration commands.  For example,
+
+``` yaml
+titleoptions:
+    titleoptions:
+    header: "Frutiger Neue LT Pro, #FFFFFF, text-scale(1.1)"
+    background-color: "#23AB2C"
+```
+
+would insert the following configuration commands into the Deckset file:
+
+``` markdown
+[.background-color: #23AB2C]
+
+[.header: Frutiger Neue LT Pro, #FFFFFF, text-scale(1.1)]
+```
+
+See the Deckset documentation for the available commands.
+
 ## Alerted text
 
 The `deckset-slides.lua` filter converts spans with the class *alert* to Deckset-style combined emphasis (currently `_**…**_`).  According to the Deckset documentation, “some themes have additional style options for those combinations.”  Thus, depending on the theme, alerted text may or may not be actually highlighted.

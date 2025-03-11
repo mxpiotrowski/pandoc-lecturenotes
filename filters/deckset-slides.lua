@@ -20,8 +20,16 @@ function Pandoc(doc)
    -- Create title slide
    table.insert(hblocks, pandoc.RawBlock('markdown',
                                          '[.hide-footer]\n[.slidenumbers: false]\n[.slidecount: false]'))
+
+   -- Per-slide customization for the title slide
+   if doc.meta.titleoptions then
+      for key, val in pairs(doc.meta.titleoptions) do
+         table.insert(hblocks, pandoc.RawBlock('markdown', '[.' .. key .. ': ' ..
+                                               pandoc.utils.stringify(val) .. ']'))
+      end
+   end
    
-   --Logo/background image
+   -- Logo/background image
    if doc.meta.titlegraphic then
       table.insert(hblocks, pandoc.Para({}))
       table.insert(hblocks, pandoc.Image({},
