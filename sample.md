@@ -739,7 +739,6 @@ You can further customize the title slide using the `titleoptions` metadata opti
 
 ``` yaml
 titleoptions:
-    titleoptions:
     header: "Frutiger Neue LT Pro, #FFFFFF, text-scale(1.1)"
     background-color: "#23AB2C"
 ```
