@@ -236,6 +236,16 @@ function Div (el)
    end
 end
 
+function CodeBlock (el)
+   -- Workaround: highlight.js (used by Deckset,
+   -- https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md)
+   -- currently doesn't has support for PostScript.
+   if el.classes[1] == 'postscript' then
+      el.classes[1] = 'txt'
+   end
+   return el
+end
+
 function Math (el)
    -- Deckset uses $$…$$ for both inline and display math.
 
