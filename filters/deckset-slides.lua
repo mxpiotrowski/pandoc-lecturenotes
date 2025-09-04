@@ -1,4 +1,4 @@
-function Pandoc(doc)
+function Pandoc (doc)
    local hblocks = {}
 
    -- Insert "global configuration commands" (see
@@ -29,16 +29,32 @@ function Pandoc(doc)
       end
    end
    
-   -- Logo/background image
+   -- Background image
    if doc.meta.titlegraphic then
       table.insert(hblocks, pandoc.Para({}))
-      table.insert(hblocks, pandoc.Image({},
+      table.insert(hblocks, pandoc.Image(doc['meta']['titlegraphic-style'] or {},
                       pandoc.utils.stringify(doc.meta.titlegraphic)))
    end
+
+   -- Logo
+   if not doc.meta['logo-position'] then
+      doc.meta['logo-position'] = 'top'
+   end
+
+   if not doc.meta['logo-style'] then
+      doc.meta['logo-style'] = 'left inline'
+   end
+
+   local logoimg
+   local logopos = pandoc.utils.stringify(doc.meta['logo-position'])
    
    if doc.meta.logo then
-      table.insert(hblocks, pandoc.Image({pandoc.Str('left fit inline')},
-                      pandoc.utils.stringify(doc.meta.logo)))
+      logoimg = pandoc.Image(doc.meta['logo-style'],
+                             pandoc.utils.stringify(doc.meta.logo))
+   end
+   
+   if doc.meta.logo and logopos == 'top' then
+      table.insert(hblocks, logoimg)
    end
 
    if doc.meta.title then
@@ -117,6 +133,10 @@ function Pandoc(doc)
                )
             end
          end
+      end
+
+      if doc.meta.logo and logopos == 'bottom' then
+         table.insert(hblocks, logoimg)
       end
    end
 
