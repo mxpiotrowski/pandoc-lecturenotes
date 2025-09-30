@@ -1,3 +1,5 @@
+csl_fields = pandoc.List({"abstract", "accessed", "annote", "archive", "archive_collection", "archive_location", "archive-place", "author", "authority", "available-date", "call-number", "chair", "chapter-number", "citation-key", "citation-label", "citation-number", "collection-editor", "collection-number", "collection-title", "compiler", "composer", "container-author", "container-title", "container-title-short", "contributor", "curator", "dimensions", "director", "division", "DOI", "edition", "editor", "editor-translator", "editorial-director", "event", "event-date", "event-place", "event-title", "executive-producer", "first-reference-note-number", "genre", "guest", "host", "illustrator", "interviewer", "ISBN", "ISSN", "issue", "issued", "jurisdiction", "keyword", "language", "license", "locator", "medium", "narrator", "note", "number", "number-of-pages", "number-of-volumes", "organizer", "original-author", "original-date", "original-publisher", "original-publisher-place", "original-title", "page", "page-first", "part-number", "part-title", "performer", "PMCID", "PMID", "printing-number", "producer", "publisher", "publisher-place", "recipient", "references", "reviewed-author", "reviewed-genre", "reviewed-title", "scale", "script-writer", "section", "series-creator", "source", "status", "submitted", "supplement-number", "title", "title-short", "translator", "URL", "version", "volume", "volume-title", "year-suffix"}) -- from citefield.lua
+
 function Pandoc (doc)
    local hblocks = {}
 
@@ -285,11 +287,15 @@ function Span (el)
       table.insert(el.content, 1, pandoc.RawInline('markdown', '_**'))
       table.insert(el.content, pandoc.RawInline('markdown', '**_'))
       return el.content
-      
-   else
-      -- Otherwise, replace spans (not supported by Deckset) with their content
-      return el.content
    end
+
+   if csl_fields:includes(el.classes[1]) then
+      -- We assume that this intended for the citefield.lua filter
+      return el
+   end
+
+   -- Otherwise, replace spans (not supported by Deckset) with their content
+   return el.content
 end
 
 function SoftBreak (el)
