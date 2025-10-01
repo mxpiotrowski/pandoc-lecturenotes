@@ -47,6 +47,18 @@ function Div (el)
    end
 end
 
+function Span (el)
+   -- If the CSL style uses the display attribute
+   -- <https://docs.citationstyles.org/en/stable/specification.html#toc-entry-71>,
+   -- the rendered list of references may contain spans (with classes
+   -- such as "csl-left-margin" or "csl-right-inline").  Since Deckset
+   -- doesn't support spans, we need to remove them, i.e., replace
+   -- them with their contents.  In some sense, this is a simplified
+   -- version of the corresponding function in deckset-slides.lua.
+   
+   return el.content
+end
+
 function Header (el)
    -- This header is automatically inserted when using the
    -- reference-section-title option.  Remove this header, we handle
@@ -63,5 +75,6 @@ end
 return {
    { Meta = Meta },
    { Div = Div },
+   { Span = Span },
    { Header = Header },
 }
