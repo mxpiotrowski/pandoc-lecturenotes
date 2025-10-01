@@ -18,12 +18,16 @@ function Div (el)
 
       -- Make sure the list of references is left-aligned and uses a
       -- plain bullet; the default em-dash works for most themes, but
-      -- can be customized using the bibliography-bullet metadata
-      -- option.
+      -- can be customized using the "bibliography-bullet" metadata
+      -- option.  We set bullet-indent to the arbitrary value of 12,
+      -- which seems to work well with many styles; it can be
+      -- customized using the "bibliography-indent" metadata option.
       local bullet = pandoc.utils.stringify(meta['bibliography-bullet'] or '—')
-      table.insert(blocks, pandoc.RawBlock(FORMAT, '[.autoscale: true]\n'
-                                           .. '[.list: alignment(left), '
-                                           .. 'bullet-character(' .. bullet .. ')]'))
+      local indent = pandoc.utils.stringify(meta['bibliography-indent'] or '12')
+      table.insert(blocks, pandoc.RawBlock(FORMAT, '[.autoscale: true]\n' ..
+                                           '[.list: alignment(left), ' ..
+                                           'bullet-character(' .. bullet .. '), ' ..
+                                           'bullet-indent(' .. indent .. ')]'))
 
       local biblist = pandoc.BulletList({})
          

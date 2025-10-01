@@ -830,7 +830,7 @@ On the other hand, the references on the following slides will be listed on the 
 ::::
 :::
 
-The list of references is left-aligned and uses an em-dash as bullet to make sure it works even for fancy themes. The bullet can be customized using the `bibliography-bullet` metadata option; `bibliography-bullet` can also be the empty string.
+The list of references is left-aligned and uses an em-dash as bullet to make sure it works even for fancy themes. The bullet can be customized using the `bibliography-bullet` metadata option; `bibliography-bullet` can also be the empty string.  You can also specify the indentation for lists in Deckset; by default, the `deckset-post-citeproc.lua` filter sets it to 12 for the bibliography.  This can by changed using the `bibliography-indent` metadata option.  If you want to format the bibliography exactly like other lists, you need to check the settings for the style in the GUI.
 
 The `autoscale` option is set for the bibliography slide, but if there are too many references, it will probably become unreadable.  The bibliography is currently limited to a single slide.
 
