@@ -279,6 +279,15 @@ function Math (el)
    end
 end
 
+function Para (el)
+   -- Handle "dual-use" presenter notes: replace an empty superscript
+   -- at the beginning of a paragraph with "^"
+   if el.c[1].t == 'Superscript' and #el.c[1].c == 0 then
+      el.c[1] = '^'
+   end
+   return el
+end
+
 function Span (el)
    if el.classes:includes("alert") then
       -- Replace spans with the "alert" class (think Beamer) with

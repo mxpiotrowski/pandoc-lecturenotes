@@ -3,6 +3,23 @@ local List = require 'pandoc.List'
 
 local showslides = true
 
+function slice (list, first, last)
+   -- table.unpack() doesn't seem to work correctly on Pandoc lists
+   result = pandoc.List()
+
+   if not last then
+      last = #list
+   end
+   
+   for i, e in pairs(list) do
+      if i >= first and i <= last then
+         result:insert(e)
+      end
+   end
+
+   return result
+end
+
 function add_raw_block (target, format, code)
    table.insert(target, pandoc.RawBlock(format, code))
 end
@@ -58,6 +75,11 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
+            elseif (el.t == "Para" and
+                    el.c[1].t == "Superscript" and #el.c[1].c == 0) then
+               -- "Dual-use" presenter notes
+               add_raw_block(result, FORMAT, '\\tcbline')
+               table.insert(result, pandoc.Para(slice(el.content, 3)))
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
@@ -240,11 +262,12 @@ function add_setup_code (meta)
    local setup_code = ''
 
    if FORMAT:match 'latex' then
-      -- Include the tcolorbox package
+      -- Include the tcolorbox package (the “skins” library is required
+      -- for \tcbline -- <https://tex.stackexchange.com/questions/303416/>)
       -- Define a counter for slides
 
       setup_code = [[
-\usepackage{tcolorbox}
+\usepackage[skins]{tcolorbox}
 \newtcolorbox{embed-slide}[2][]{%
   colframe=orange, colback=orange!8!white,
   fonttitle=\footnotesize\sffamily\bfseries,
