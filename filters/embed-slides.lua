@@ -75,8 +75,9 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
-            elseif (el.t == "Para" and
-                    el.c[1].t == "Superscript" and #el.c[1].c == 0) then
+            elseif (el.t == "Para"
+                    and #el.c > 0 -- empty paras can, e.g., be caused by presentation-only images
+                    and el.c[1].t == "Superscript" and #el.c[1].c == 0) then
                -- "Dual-use" presenter notes
                add_raw_block(result, FORMAT, '\\tcbline')
                table.insert(result, pandoc.Para(slice(el.content, 3)))
