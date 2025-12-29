@@ -937,8 +937,6 @@ is rendered as:
 ::: slide
 Slide content
 
-![](assets/image1.eps)
-
 ^ Regular presenter note—doesn’t appear in lecture notes
 
 ^^ Dual-use presenter note—rendered as slide “caption” in lecture notes.
