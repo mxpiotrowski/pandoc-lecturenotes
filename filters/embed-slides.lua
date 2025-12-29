@@ -161,6 +161,22 @@ function format_slides (elem)
          for i, el in pairs(elem.content) do
             if el.t == "Header" then
                table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%^ ')) then
+               ; -- Don't output presenter notes
+            elseif (el.t == "Para"
+                    and #el.c > 0 -- empty paras can, e.g., be caused by presentation-only images
+                    and el.c[1].t == "Superscript" and #el.c[1].c == 0) then
+               -- "Dual-use" presenter notes
+               table.insert(result, pandoc.HorizontalRule())
+               table.insert(result, pandoc.Para(slice(el.content, 3)))
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
+               -- Handle the Deckset [.column] command
+               table.insert(result, pandoc.HorizontalRule())
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
+               ; -- Don't output Deckset per-slide commands
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
                     and el.c[1].format == 'html') then
                -- Deckset uses HTML syntax for defining anchors.  We
@@ -204,6 +220,12 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
+            elseif (el.t == "Para"
+                    and #el.c > 0 -- empty paras can, e.g., be caused by presentation-only images
+                    and el.c[1].t == "Superscript" and #el.c[1].c == 0) then
+               -- "Dual-use" presenter notes
+               table.insert(result, pandoc.HorizontalRule())
+               table.insert(result, pandoc.Para(slice(el.content, 3)))
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command

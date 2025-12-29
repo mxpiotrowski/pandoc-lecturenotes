@@ -866,7 +866,7 @@ When generating LaTeX output, embedded slides are wrapped in an `embed-slide` en
 
 Slide headers are wrapped in a `\slideheader` macro with two arguments, the header level and the content.  This allows the user to customize the appearance by redefining the macro in `header-Includes`.  For example:
 
-```
+````
    header-includes: |
        ```{=latex}
        \renewcommand{\slideheader}[2]{%
@@ -879,7 +879,7 @@ Slide headers are wrapped in a `\slideheader` macro with two arguments, the head
          #2}
        }
        ```
-```
+````
 
 ## Showing and Hiding Content
 
@@ -915,6 +915,34 @@ The classes `presentation` and `lecturenotes` can also be added to individual im
 :::
 
 If the metadata option `showslides` is false, all slides will be excluded from the notes.
+
+## Dual-Use Presenter Notes
+
+Deckset turns every paragraph starting with a `^` into a presenter note and doesn’t show this text on the slides.  When embedding slides, these notes aren’t output either.  However, sometimes the presenter notes could also serve as “caption” on the lecture notes.
+
+Instead of duplicating the text, once as a presenter note, and once as a paragraph with the `.lecturenotes` class, you can use a _dual-use presenter note_: a paragraph starting with `^^` will appear as presenter note on slides and as a “caption” on lecture notes.  For example:
+
+```
+::: slide
+Slide content
+
+^ Regular presenter note—doesn’t appear in lecture notes
+
+^^ Dual-use presenter note—rendered as “caption” in lecture notes.
+:::
+```
+
+is rendered as:
+
+::: slide
+Slide content
+
+![](assets/image1.eps)
+
+^ Regular presenter note—doesn’t appear in lecture notes
+
+^^ Dual-use presenter note—rendered as slide “caption” in lecture notes.
+:::
 
 # Image and Video Credits
 
