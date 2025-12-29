@@ -28,6 +28,7 @@ BIB=references.bib
 
 %.html: %.md filters/embed-slides.lua embed-slides.css
 	pandoc -s -f markdown-implicit_figures -t html5 \
+	  --default-image-extension=jpg \
 	  -L filters/embed-slides.lua -c embed-slides.css \
 	  --mathml \
 	  --toc=true --citeproc --bibliography=${BIB} \
