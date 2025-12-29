@@ -488,13 +488,13 @@ Combine Columns with Auto-Scaling to automatically scale down the text size to f
 Full Background Image
 
 ::: slide
-![](assets/image1.jpg)
+![](assets/image1)
 :::
 
 Fit Background Image
 
 ::: slide
-![fit](assets/image1.jpg)
+![fit](assets/image1)
 :::
 
 Multiple Background Images.  Deckset doesn’t require that each image is a separate paragraph, but this is the same issue as with multiple per-slide commands—so, for Pandoc, insert a newline between them.
@@ -502,11 +502,11 @@ Multiple Background Images.  Deckset doesn’t require that each image is a sepa
 Also, this does not easily convert to LaTeX or ms—this is essentially the same problem as with multiple columns.
 
 ::: slide
-![](assets/image1.jpg)
+![](assets/image1)
 
-![](assets/image2.jpg)
+![](assets/image2)
 
-![](assets/image3.jpg)
+![](assets/image3)
 :::
 
 ## Text on Images
@@ -514,7 +514,7 @@ Also, this does not easily convert to LaTeX or ms—this is essentially the same
 None of the following features are converted to LaTeX or ms.
 
 ::: slide
-![](assets/image1.jpg)
+![](assets/image1)
 
 # Text on Images
 
@@ -522,13 +522,13 @@ Setting text on images applies a filter to the image to make the text more reada
 :::
 
 ::: slide
-![original](assets/image1.jpg)
+![original](assets/image1)
 
 # Disable Filter
 :::
 
 ::: slide
-![left filtered](assets/image1.jpg)
+![left filtered](assets/image1)
 
 # Force Apply Filter
 
@@ -536,7 +536,7 @@ Use the `filtered` keyword to apply the theme's filter to an image that isn't fi
 :::
 
 ::: slide
-![original 250%](assets/image1.jpg)
+![original 250%](assets/image1)
 
 # Zoom In
 :::
@@ -544,7 +544,7 @@ Use the `filtered` keyword to apply the theme's filter to an image that isn't fi
 Split slides are to some extent rendered in LaTeX.
 
 ::: slide
-![right fit](assets/image1.jpg)
+![right fit](assets/image1)
 
 # Split Slides
 
@@ -558,13 +558,13 @@ Combine Text and Images
 ::: slide
 # Combine Text and Images
 
-![inline](assets/image1.jpg)
+![inline](assets/image1)
 :::
 
 ::: slide
 # Fill the Slide
 
-![inline fill](assets/image1.jpg)
+![inline fill](assets/image1)
 :::
 
 Custom scaling could perhaps be converted to LaTeX and ms, but it’s not clear to me what the scaling refers to.  It’s currently not handled.
@@ -572,7 +572,7 @@ Custom scaling could perhaps be converted to LaTeX and ms, but it’s not clear 
 ::: slide
 # Custom Scaling
 
-![inline 50%](assets/image1.jpg)
+![inline 50%](assets/image1)
 :::
 
 Image grids would be very hard to convert to LaTeX and ms; we would first need to identify arrangements that are treated as image grids by Deckset and then work out an equivalent arrangement.  This is currently not handled.
@@ -580,8 +580,8 @@ Image grids would be very hard to convert to LaTeX and ms; we would first need t
 ::: slide
 # Image Grids
 
-![inline fill](assets/image2.jpg)![inline fill](assets/image3.jpg)  
-![inline fill](assets/image1.jpg)
+![inline fill](assets/image2)![inline fill](assets/image3)  
+![inline fill](assets/image1)
 :::
 
 One problem, however, is that not all images may fit onto the page.  A workaround for LaTeX output is to add a Pandoc size attribute, which is removed by the Deckset filter, e.g.:
@@ -590,8 +590,8 @@ One problem, however, is that not all images may fit onto the page.  A workaroun
 ::: slide
 # Image Grids (test for LaTeX output)
 
-![inline fill](assets/image2.jpg){width=30%}![inline fill](assets/image3.jpg){width=30%}  
-![inline fill](assets/image1.jpg){width=30%}
+![inline fill](assets/image2){width=30%}![inline fill](assets/image3){width=30%}  
+![inline fill](assets/image1){width=30%}
 :::
 ```
 
@@ -727,10 +727,10 @@ You can specify an image file name in the metadata option `logo` to insert the f
 
 This can be customized using the metadata options `logo-position` and `logo-style`.  If `logo-position` has the value `bottom`, the logo image will be placed as the _last_ item on the title slide.  The `logo-style` option allows you to specify Deckset image options to override the default of `left inline`.
 
-You can specify an image file name in the metadata option `titlegraphic` to insert the following code above the text (here for the file name `assets/image1.jpg`); this will appear as background image of the title slide:
+You can specify an image file name in the metadata option `titlegraphic` to insert the following code above the text (here for the file name `assets/image1`); this will appear as background image of the title slide:
 
 ```
-![](assets/image1.jpg)
+![](assets/image1)
 ```
 
 The metadata option `titlegraphic-style` allows you to specify image options for the background image (which won’t actually be a background image if you use the `left` or `right` options).
@@ -840,7 +840,7 @@ For notes, the bibliography section lists all references that appear either in t
 
 ::: slide
 
-![left](assets/image1.jpg)
+![left](assets/image1)
 
 # [Geräteentfremdung]{lang=de}
 
@@ -856,8 +856,8 @@ Deckset does not support attributes, so the filter strips them off.  This can be
 ::: slide
 # Image Grids
 
-![inline fill](assets/image2.jpg){width=30%}![inline fill](assets/image3.jpg){width=30%}  
-![inline fill](assets/image1.jpg){width=30%}
+![inline fill](assets/image2){width=30%}![inline fill](assets/image3){width=30%}  
+![inline fill](assets/image1){width=30%}
 :::
 
 ## Customizing the Rendering of Embedded Slides
@@ -895,7 +895,7 @@ The classes `presentation` and `lecturenotes` can also be added to individual im
 
 ```
 ::: slide
-![](assets/image1.jpg){.presentation}
+![](assets/image1){.presentation}
 
 :::: {lang=de}
 > Die Philosophen haben die Welt nur verschieden interpretirt; es kommt aber darauf an,
@@ -906,7 +906,7 @@ The classes `presentation` and `lecturenotes` can also be added to individual im
 ```
 
 ::: slide
-![](assets/image1.jpg){.presentation}
+![](assets/image1){.presentation}
 
 :::: {lang=de}
 > Die Philosophen haben die Welt nur verschieden interpretirt; es kommt aber darauf an, sie zu verändern.  
@@ -944,11 +944,11 @@ Slide content
 
 # Image and Video Credits
 
-- `image1.jpg`: Photo by [Gabriel Garcia Marengo](https://unsplash.com/@gabrielgm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
+- `image1`: Photo by [Gabriel Garcia Marengo](https://unsplash.com/@gabrielgm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
   
-- `image2.jpg`: Photo by [Mark de Jong](https://unsplash.com/@mrmarkdejong?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+- `image2`: Photo by [Mark de Jong](https://unsplash.com/@mrmarkdejong?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/lausanne?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
-- `image3.jpg`: Photo by [Nolan Krattinger](https://unsplash.com/@odes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/unil?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+- `image3`: Photo by [Nolan Krattinger](https://unsplash.com/@odes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/unil?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
 - `video1.mp4`: Davidmoerike, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lausanne-metro2-Ouchy.ogv)
 

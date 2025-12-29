@@ -13,14 +13,14 @@ BIB=references.bib
 
 %-latex.pdf: %.md filters/embed-slides.lua
 	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
-	--number-sections \
+	--number-sections --default-image-extension=jpg \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=xelatex $<
 
 %-ms.pdf: %.md filters/embed-slides.lua
 	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
-	--number-sections \
+	--number-sections --default-image-extension=eps \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=pdfroff --pdf-engine-opt=-dpaper=a4 \

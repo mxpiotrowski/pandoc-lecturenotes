@@ -141,6 +141,8 @@ function format_slides (elem)
                   add_raw_block(result, FORMAT, '\\tcblower')
                   result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
                end
+            elseif (el.t == "Figure") then
+               table.insert(result, el.c[1])
             else
                table.insert(result, el)
             end
@@ -188,6 +190,12 @@ function format_slides (elem)
                if target then
                   add_raw_block(result, FORMAT, '.pdfhref M "' .. target .. '"')
                end
+            elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "Image") then
+               -- el.c[1].title = ''
+               -- el.c[1].caption = ''
+               table.insert(result, el)
+            elseif (el.t == "Figure") then
+               table.insert(result, el.c[1])
             else
                table.insert(result, el)
             end
