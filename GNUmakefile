@@ -26,6 +26,13 @@ BIB=references.bib
 	--pdf-engine=pdfroff --pdf-engine-opt=-dpaper=a4 \
 	--pdf-engine-opt=-U --pdf-engine-opt=-P-pa4 $<
 
+%-typst.pdf: %.md filters/embed-slides.lua
+	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
+	--number-sections --default-image-extension=jpg \
+	-L filters/embed-slides.lua \
+	--citeproc --bibliography=${BIB} \
+	--pdf-engine=typst $<
+
 %.html: %.md filters/embed-slides.lua embed-slides.css
 	pandoc -s -f markdown-implicit_figures -t html5 \
 	  --default-image-extension=jpg \
