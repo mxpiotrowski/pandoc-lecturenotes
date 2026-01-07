@@ -33,6 +33,12 @@ BIB=references.bib
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=typst $<
 
+%-typst.typ: %.md filters/embed-slides.lua
+	pandoc -s -f markdown-implicit_figures -t typst -o $@ \
+	--number-sections --default-image-extension=jpg \
+	-L filters/embed-slides.lua \
+	--citeproc --bibliography=${BIB} $<
+
 %.html: %.md filters/embed-slides.lua embed-slides.css
 	pandoc -s -f markdown-implicit_figures -t html5 \
 	  --default-image-extension=jpg \
