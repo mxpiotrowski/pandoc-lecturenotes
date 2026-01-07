@@ -34,6 +34,8 @@ function format_slides (elem)
          add_raw_block(result, FORMAT, '\\addtocounter{slidectr}{1}')
       elseif FORMAT:match 'ms' then
          add_raw_block(result, FORMAT, '.nr slidectr +1')
+      elseif FORMAT:match 'typst' then
+         ; -- [TODO]
       end
       
       return result
@@ -256,14 +258,62 @@ function format_slides (elem)
             else
                table.insert(result, el)
 
-   end
             end
+         end
 
          -- table.insert(result, elem)
          add_raw_block(result, FORMAT, '</section>')
          add_raw_block(result, FORMAT, '</article>')
 
          -- table.insert(result, elem)
+      elseif FORMAT:match 'typst' then -- [TODO]
+         elem.attributes['typst:fill'] = 'orange'
+         elem.attributes['typst:text:fill'] = 'blue'
+         if elem.identifier ~= '' then
+            add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
+         end
+
+         for i, el in pairs(elem.content) do
+            -- … [TODO]
+            if el.t == "Header" then
+               -- [fit] is a Deckset command
+               if el.content[1] == pandoc.Str('[fit]') then
+                  table.remove(el.content, 1)
+               end
+
+               -- Delete leading space
+               if el.content[1].t == "Space" then
+                  table.remove(el.content, 1)
+               end
+
+               -- -- Wrap the header content in a LaTeX command, which
+               -- -- can be customized if desired.
+               -- table.insert(el.content, 1,
+               --              pandoc.RawInline(FORMAT, '\\slideheader{'
+               --                               .. el.level .. '}{'
+               -- ))
+               -- table.insert(el.content, pandoc.RawInline(FORMAT, '}'))
+               -- table.insert(result, pandoc.Para(el.content))
+               table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%^ ')) then
+               ; -- Don't output presenter notes
+            -- ⋮ [TODO]
+            elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
+                    and el.c[1].format == 'html') then
+               -- Deckset uses HTML syntax for defining anchors.  We
+               -- support this, but prefer an ID attribute on the
+               -- slide div
+               
+               local target = el.c[1].text:match('^<a name="(.+)"/>')
+
+               if target then
+                  add_raw_block(result, FORMAT, '<' .. target .. '>')
+               end
+            end
+         end
+                  
+         table.insert(result, elem)
       end
       
       return result
@@ -322,7 +372,15 @@ function add_setup_code (meta)
 
       setup_code = '.nr slidectr 1'
       setup_code = '.\\" ' .. string.rep('*', 63) .. '\n' ..
-      '.\\" Added by ' .. PANDOC_SCRIPT_FILE .. '\n' .. setup_code
+         '.\\" Added by ' .. PANDOC_SCRIPT_FILE .. '\n' .. setup_code
+   elseif FORMAT:match 'typst' then
+      setup_code = [[
+#let slideno = counter("slidectr")
+#let slideheader(it) = block(fill: orange, inset: .25em, radius: 4pt)[
+  #slideno.step()
+  *Slide #context slideno.display()*
+]
+]]
    end
 
    List.insert(header_includes, 1, pandoc.RawBlock(FORMAT, setup_code))
@@ -360,6 +418,10 @@ function hide_unsupported_media (el)
                pandoc.RawInline(FORMAT, '.BX "' .. replacement .. ': '),
                pandoc.Str(filename),
                pandoc.RawInline(FORMAT, '\n')
+            }
+         elseif FORMAT:match 'typst' then
+            return {
+               pandoc.RawInline('typst', '⚠ ' .. replacement .. '\n') -- [TODO]
             }
          end
       end
