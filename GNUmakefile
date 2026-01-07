@@ -11,6 +11,17 @@ BIB=references.bib
 	-L filters/deckset-post-citeproc.lua \
 	$<
 
+%-revealjs.html: %.md
+	pandoc -s -f markdown-implicit_figures \
+	-t revealjs \
+	-o $@ \
+	--default-image-extension=jpg \
+	--wrap=none --strip-comments=true \
+	--bibliography=${BIB} \
+	-L filters/revealjs-slides.lua \
+	--citeproc \
+	$<
+
 %-latex.pdf: %.md filters/embed-slides.lua
 	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
 	--number-sections --default-image-extension=jpg \
