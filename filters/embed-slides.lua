@@ -85,9 +85,36 @@ function format_slides (elem)
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
                table.insert(result, pandoc.HorizontalRule())
+            elseif (el.t == "Div" and
+                    el.classes:includes("columns")) then
+               -- Handle native columns
+               -- [FIXME] Quick and dirty, but something similar could be used for Deckset as well.
+               -- [TODO] ms, html
+               local cols = #el.content
+
+               add_raw_block(result, FORMAT, '\\begin{tcbraster}[raster column skip=1em, raster columns=' .. cols .. ', size=small]')
+               -- tcbraster must not contain paragraph breaks, but
+               -- there's currently no way to prevent Pandoc from
+               -- adding them automatically.  Workaround as per
+               -- <https://github.com/jgm/pandoc/issues/7111#issuecomment-2917284934>
+               add_raw_block(result, FORMAT, '\\let\\savepar\\par \\let\\par\\relax')
+               
+               for _, e in pairs(el.content) do
+                  if e.t == "Div" and e.classes:includes("column") then
+                     add_raw_block(result, FORMAT, '\\begin{tcolorbox}')
+                     table.insert(result, e)
+                     add_raw_block(result, FORMAT, '\\end{tcolorbox}')
+                  end
+               end
+
+               add_raw_block(result, FORMAT, '\\let\\par\\savepar')
+               add_raw_block(result, FORMAT, '\\end{tcbraster}')
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
                ; -- Don't output Deckset per-slide commands
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%. %. %.')) then
+               ; -- Don't output pauses (natively supported slide formats)
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
                     and el.c[1].format == 'html') then
                -- Deckset uses HTML syntax for defining anchors.  We
@@ -179,6 +206,9 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
                ; -- Don't output Deckset per-slide commands
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%. %. %.')) then
+               ; -- Don't output pauses (natively supported slide formats)
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
                     and el.c[1].format == 'html') then
                -- Deckset uses HTML syntax for defining anchors.  We
@@ -298,7 +328,7 @@ function add_setup_code (meta)
       -- Define a counter for slides
 
       setup_code = [[
-\usepackage[skins]{tcolorbox}
+\usepackage[skins, raster]{tcolorbox}
 \newtcolorbox{embed-slide}[2][]{%
   colframe=orange, colback=orange!8!white,
   fonttitle=\footnotesize\sffamily\bfseries,

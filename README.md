@@ -1,6 +1,6 @@
 # pandoc-lecturenotes
 
-This is a set of filters for producing slides (for [Deckset](https://www.deckset.com/)) and notes with embedded slides (for formatting with **ms** or LaTeX) from a single (Markdown) document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight.
+This is a set of filters for producing slides (using any of the slide formats supported by Pandoc—see the [Pandoc User’s Guide](https://pandoc.org/MANUAL.html#slide-shows)—or [Deckset](https://www.deckset.com/)) and lecture notes with or without embedded slides (in PDF, using LaTeX or—with limitations—**ms**) from a single Markdown document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight; see [pandoc-lecturenotes and the Quest for More Efficient Professoring](https://dynalabs.de/mxp/blog/2025-12-29) for a longer description.
 
 Within the document, slides are contained in blocks with the class `slide` like this:
 
@@ -15,9 +15,9 @@ Within the document, slides are contained in blocks with the class `slide` like 
 :::
 ```
 
-The content of the slide blocks is in Deckset’s Markdown variant, with some extensions and some limitations.
+For producing slides in the formats natively supported by Pandoc (e.g., reveal.js), use the `native-slides.lua` filter and the desired target format (e.g., `-t revealjs`).  The `native-slides.lua` filter should typically come early in the filter pipeline, in any case before `--citeproc`, to avoid references that don’t occur on the slides to appear in the list of references.  The slide blocks can in principle contain any construct supported by Pandoc.
 
-For producing slides, use the `deckset-slides.lua` filter with `commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars` as target format.  If you use citeproc, add the `deckset-post-citeproc.lua` filter **after** the `--citeproc` option.
+For producing slides for Deckset, use the `deckset-slides.lua` filter with `commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars` as target format.  If you use citeproc, add the `deckset-post-citeproc.lua` filter **after** the `--citeproc` option.  The content of the slide blocks is in Deckset’s Markdown variant, with some extensions and some limitations.
 
 For producing notes with embedded slides for formatting with **ms** or LaTeX, use the `embed-slides.lua` filter.  You can exclude slides from the notes by adding the `presentation` class, for example:
 
@@ -37,9 +37,11 @@ This can be used to explicitly use different images for the presentation and the
 
 The `embed-slides.lua` filter aims to produce useful renderings of the slides, but obviously cannot reproduce everything that Deckset does, especially when it comes to images.
 
-Both filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
+The filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
 
 ## Formatting `sample.md`
+
+Note: `sample.md` currently assumes Deckset slides and the documentation only applies to `deckset-slides.lua`.
 
 Do `make sample-deckset.md` to produce the slides version of `sample.md`, `make sample-latex.pdf` to produce a LaTeX-formatted PDF version, and `make sample-ms.pdf` for the groff-formatted PDF version (note that the version of [groff](https://www.gnu.org/software/groff/) shipped with macOS is too old for Pandoc, you need to install a more recent version).
 
