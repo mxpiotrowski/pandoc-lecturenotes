@@ -1,6 +1,6 @@
 # pandoc-lecturenotes
 
-This is a set of filters for producing slides (using any of the slide formats supported by Pandoc or [Deckset](https://www.deckset.com/)) and lecture notes with or without embedded slides (in PDF, using LaTeX or—with limitations—**ms**) from a single Markdown document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight.
+This is a set of filters for producing slides (using any of the slide formats supported by Pandoc—see the [Pandoc User’s Guide](https://pandoc.org/MANUAL.html#slide-shows)—or [Deckset](https://www.deckset.com/)) and lecture notes with or without embedded slides (in PDF, using LaTeX or—with limitations—**ms**) from a single Markdown document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight; see [pandoc-lecturenotes and the Quest for More Efficient Professoring](https://dynalabs.de/mxp/blog/2025-12-29) for a longer description.
 
 Within the document, slides are contained in blocks with the class `slide` like this:
 
@@ -37,11 +37,11 @@ This can be used to explicitly use different images for the presentation and the
 
 The `embed-slides.lua` filter aims to produce useful renderings of the slides, but obviously cannot reproduce everything that Deckset does, especially when it comes to images.
 
-Both filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
+The filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
 
 ## Formatting `sample.md`
 
-Note: `sample.md` currently assumes Deckset.
+Note: `sample.md` currently assumes Deckset slides and the documentation only applies to `deckset-slides.lua`.
 
 Do `make sample-deckset.md` to produce the slides version of `sample.md`, `make sample-latex.pdf` to produce a LaTeX-formatted PDF version, and `make sample-ms.pdf` for the groff-formatted PDF version (note that the version of [groff](https://www.gnu.org/software/groff/) shipped with macOS is too old for Pandoc, you need to install a more recent version).
 
