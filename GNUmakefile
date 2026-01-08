@@ -18,7 +18,18 @@ BIB=references.bib
 	--default-image-extension=jpg \
 	--wrap=none --strip-comments=true \
 	--bibliography=${BIB} \
-	-L filters/revealjs-slides.lua \
+	-L filters/native-slides.lua \
+	--citeproc \
+	$<
+
+%.pptx: %.md
+	pandoc -s -f markdown-implicit_figures \
+	-t pptx \
+	-o $@ \
+	--default-image-extension=jpg \
+	--wrap=none --strip-comments=true \
+	--bibliography=${BIB} \
+	-L filters/native-slides.lua \
 	--citeproc \
 	$<
 
