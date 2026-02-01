@@ -35,7 +35,7 @@ function format_slides (elem)
       elseif FORMAT:match 'ms' then
          add_raw_block(result, FORMAT, '.nr slidectr +1')
       elseif FORMAT:match 'typst' then
-         ; -- [TODO]
+         add_raw_block(result, FORMAT, '#counter(figure.where(kind: "fslide")).step()')
       end
       
       return result
@@ -267,12 +267,11 @@ function format_slides (elem)
 
          -- table.insert(result, elem)
       elseif FORMAT:match 'typst' then -- [TODO]
-         elem.attributes['typst:fill'] = 'orange'
-         elem.attributes['typst:text:fill'] = 'blue'
-         if elem.identifier ~= '' then
-            add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
-         end
+         -- elem.attributes['typst:fill'] = 'orange'
+         -- elem.attributes['typst:text:fill'] = 'blue'
 
+         add_raw_block(result, FORMAT, '#fslide[')
+         
          for i, el in pairs(elem.content) do
             -- … [TODO]
             if el.t == "Header" then
@@ -286,19 +285,14 @@ function format_slides (elem)
                   table.remove(el.content, 1)
                end
 
-               -- -- Wrap the header content in a LaTeX command, which
-               -- -- can be customized if desired.
-               -- table.insert(el.content, 1,
-               --              pandoc.RawInline(FORMAT, '\\slideheader{'
-               --                               .. el.level .. '}{'
-               -- ))
-               -- table.insert(el.content, pandoc.RawInline(FORMAT, '}'))
-               -- table.insert(result, pandoc.Para(el.content))
-               table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
+               table.insert(result, el)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
-            -- ⋮ [TODO]
+               -- ⋮ [TODO]
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
+               ; -- Don't output Deckset per-slide commands
             elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "RawInline"
                     and el.c[1].format == 'html') then
                -- Deckset uses HTML syntax for defining anchors.  We
@@ -306,14 +300,20 @@ function format_slides (elem)
                -- slide div
                
                local target = el.c[1].text:match('^<a name="(.+)"/>')
-
-               if target then
-                  add_raw_block(result, FORMAT, '<' .. target .. '>')
-               end
+               elem.identifier = target
+               -- ⋮ [TODO]
+            else
+               table.insert(result, el)
             end
          end
-                  
-         table.insert(result, elem)
+
+         add_raw_block(result, FORMAT, ']')
+
+         if elem.identifier ~= '' then
+            add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
+         end
+
+--         table.insert(result, elem)
       end
       
       return result
@@ -375,11 +375,26 @@ function add_setup_code (meta)
          '.\\" Added by ' .. PANDOC_SCRIPT_FILE .. '\n' .. setup_code
    elseif FORMAT:match 'typst' then
       setup_code = [[
-#let slideno = counter("slidectr")
-#let slideheader(it) = block(fill: orange, inset: .25em, radius: 4pt)[
-  #slideno.step()
-  *Slide #context slideno.display()*
-]
+#let fslide(body, fill: luma(230), label: "Slide", caption: none) = {
+    let slideheader(it) = block(fill: orange, inset: .25em, height: 1.5em, radius: .25em)[
+        #align(horizon)[
+            *#label #context counter(figure.where(kind: "fslide")).display()*
+        ]
+    ]
+
+    figure(kind: "fslide", caption: caption, supplement: [Slide],
+           rect(
+               width: 100%,
+               fill: fill,
+               inset: 0mm,
+               radius: .25em,
+               [#set align(left);
+                #set heading(outlined: false, numbering: none) // Don’t list slide headers in PDF TOC
+
+                #slideheader[];
+                #block(above: 0mm, inset: 1em, body)],
+    ))
+}
 ]]
    end
 
