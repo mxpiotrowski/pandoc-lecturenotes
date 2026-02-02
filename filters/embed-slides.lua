@@ -266,12 +266,42 @@ function format_slides (elem)
          add_raw_block(result, FORMAT, '</article>')
 
          -- table.insert(result, elem)
-      elseif FORMAT:match 'typst' then -- [TODO]
+      elseif FORMAT:match 'typst' then -- Work in progress
+         -- Note: <https://pandoc.org/typst-property-output.html>
          -- elem.attributes['typst:fill'] = 'orange'
          -- elem.attributes['typst:text:fill'] = 'blue'
 
          add_raw_block(result, FORMAT, '#fslide[')
-         
+
+         -- Handling of columns
+         local columns = 1 -- total number of columns
+         local col = 0     -- position of the current column
+         local split = false
+
+         -- Determine the total number of columns by counting the [.column] commands
+         for _, block in ipairs(elem.content) do
+            if (block.t == "Para" and string.match(pandoc.utils.stringify(block), '^%[%.column]%s*$')) then
+               columns = columns + 1
+            end
+         end
+
+         -- [HACK] We can consider split slides as a special case of
+         -- two columns (although Deckset renders them a little
+         -- differently)
+         for _, block in ipairs(elem.content) do
+            if (block.t == "Para" and #block.c == 1 and block.c[1].t == "Image") then
+               if block.c[1].caption
+                  and string.match(pandoc.utils.stringify(block.c[1].caption), '[lr][ei][fg]h?t') then
+                  columns = 2
+                  split = true
+               end
+            end
+         end
+         if (split) then
+            add_raw_block(result, FORMAT, '#columns(' .. columns ..', gutter: 2em)[')
+         end
+         --
+            
          for i, el in pairs(elem.content) do
             -- … [TODO]
             if el.t == "Header" then
@@ -290,6 +320,17 @@ function format_slides (elem)
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
                -- ⋮ [TODO]
+               
+            elseif (el.t == "Para" and
+                    string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
+               -- Handle the Deckset [.column] command
+               -- table.insert(result, pandoc.HorizontalRule())
+               if (col == 0) then -- this is the first [.column]
+                  add_raw_block(result, FORMAT, '#columns(' .. columns - 1 ..', gutter: 2em)[')
+                  col = col + 1
+               else
+                  add_raw_block(result, FORMAT, '#colbreak()')
+               end
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.[-%a]+')) then
                ; -- Don't output Deckset per-slide commands
@@ -301,13 +342,29 @@ function format_slides (elem)
                
                local target = el.c[1].text:match('^<a name="(.+)"/>')
                elem.identifier = target
+               
                -- ⋮ [TODO]
+               
+            elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "Image") then -- [HACK]
+               if el.c[1].caption and string.match(pandoc.utils.stringify(el.c[1].caption), 'right') then
+                  add_raw_block(result, FORMAT, '#colbreak()')
+                  table.insert(result, el)
+               elseif el.c[1].caption and string.match(pandoc.utils.stringify(el.c[1].caption), 'left') then
+                  table.insert(result, el)
+                  add_raw_block(result, FORMAT, '#colbreak()')
+               else
+                  table.insert(result, el)
+               end
             else
                table.insert(result, el)
             end
          end
 
-         add_raw_block(result, FORMAT, ']')
+         if (columns > 1) then
+            add_raw_block(result, FORMAT, ']') -- close #columns()
+         end
+         
+         add_raw_block(result, FORMAT, ']') -- close #fslide()
 
          if elem.identifier ~= '' then
             add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')

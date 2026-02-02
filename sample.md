@@ -458,7 +458,7 @@ on the first line of your markdown file.
 
 ## Columns
 
-Converting this to LaTeX or ms would be a major effort.  Instead, columns are rendered vertically.
+Columns can easily be converted to Typst, but it would be a major effort in LaTeX or ms.  In these formats, columns are rendered vertically.
 
 ::: slide
 # Columns
@@ -502,6 +502,7 @@ Multiple Background Images.  Deckset doesn’t require that each image is a sepa
 Also, this does not easily convert to LaTeX or ms—this is essentially the same problem as with multiple columns.
 
 ::: slide
+
 ![](assets/image1)
 
 ![](assets/image2)
