@@ -3,6 +3,17 @@ local List = require 'pandoc.List'
 
 local showslides = true
 
+function join (sep, list)
+   local result = ''
+   
+   for i, str in pairs(list)
+   do
+      result = result .. str .. (i < #list and sep or '')
+   end
+
+   return result
+end
+
 function slice (list, first, last)
    -- table.unpack() doesn't seem to work correctly on Pandoc lists
    result = pandoc.List()
@@ -79,6 +90,47 @@ function format_slides (elem)
                table.insert(el.content, pandoc.RawInline(FORMAT, '}'))
                table.insert(result, pandoc.Para(el.content))
 
+            elseif el.t == "Div" and el.classes:includes('notes', 1) then
+               ; -- Don't output Pandoc-native presenter notes
+
+            elseif el.t == "Div" and el.classes:includes('columns', 1) then
+               -- Pandoc-native columns
+
+               local col_formats = {}
+               local format_column = function (elem)
+                  if elem.classes:includes('column') then
+                     table.insert(col_formats, elem.attributes['width'])
+                     return elem
+                  end
+
+                  return nil
+               end
+
+               local columns = el.c:walk({ Div = format_column })
+
+               -- print("◊", #columns) -- [DEBUG]
+            
+               table.insert(result,
+                            pandoc.RawBlock(FORMAT, '\\begin{tcbraster}[raster columns=' .. #col_formats .. ']'))
+            
+               for _, block in pairs(columns) do
+                  -- [HACK] There must be no newline between the
+                  -- tcolorboxes, but it's not possible to output
+                  -- RawBlocks without newlines.  We therefore check
+                  -- it the previous RawBlock is \end{tcolorbox} and
+                  -- then add the \begin{tcolorbox} to the same
+                  -- RawBlock.
+                  if result[#result].t == 'RawBlock' and result[#result].text:match('^\\end{tcolorbox}') then
+                     result[#result].text =  result[#result].text .. '\\begin{tcolorbox}'
+                  else
+                     table.insert(result, pandoc.RawBlock(FORMAT, '\\begin{tcolorbox}'))
+                  end
+                  table.insert(result, block)
+                  table.insert(result, pandoc.RawBlock(FORMAT, '\\end{tcolorbox}'))
+               end
+
+               table.insert(result, pandoc.RawBlock(FORMAT, '\\end{tcbraster}'))
+
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
@@ -88,6 +140,8 @@ function format_slides (elem)
                -- "Dual-use" presenter notes
                add_raw_block(result, FORMAT, '\\tcbline')
                table.insert(result, pandoc.Para(slice(el.content, 3)))
+            elseif (el.t == "Para" and string.match(pandoc.utils.stringify(el), '^. . .%s*$')) then
+               ; -- Don't output Pandoc native pauses
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
@@ -172,6 +226,8 @@ function format_slides (elem)
          for i, el in pairs(elem.content) do
             if el.t == "Header" then
                table.insert(result, pandoc.Para(pandoc.Strong(el.content)))
+            elseif el.t == "Div" and el.classes:includes('notes', 1) then
+               ; -- Don't output Pandoc-native presenter notes
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%^ ')) then
                ; -- Don't output presenter notes
@@ -181,6 +237,8 @@ function format_slides (elem)
                -- "Dual-use" presenter notes
                table.insert(result, pandoc.HorizontalRule())
                table.insert(result, pandoc.Para(slice(el.content, 3)))
+            elseif (el.t == "Para" and string.match(pandoc.utils.stringify(el), '^. . .%s*$')) then
+               ; -- Don't output Pandoc native pauses
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
@@ -313,14 +371,49 @@ function format_slides (elem)
                end
 
                table.insert(result, block)
+
+            elseif block.t == "Div" and block.classes:includes('notes', 1) then
+               ; -- Don't output Pandoc-native presenter notes
+
+            elseif block.t == "Div" and block.classes:includes('columns', 1) then
+               -- Pandoc-native columns
+
+               local col_formats = {}
+               local format_column = function (elem)
+                  if elem.classes:includes('column') then
+                     table.insert(col_formats, elem.attributes['width'])
+                     -- elem.attributes['typst:fill'] = 'luma(250)'
+                     elem.attributes['typst:width'] = '100%'
+                     return elem
+                  end
+
+                  return nil
+               end
+
+               local columns = block.c:walk({ Div = format_column })
+
+               -- print("◊", #columns) -- [DEBUG]
+            
+               table.insert(result,
+                            pandoc.RawBlock(FORMAT,
+                                            '#grid(columns: (' .. join(',', col_formats)
+                                            .. '), inset: 0.25em, gutter: 0.25em, stroke: 0.5pt + gray, '))
+            
+               for _, block in pairs(columns) do
+                  table.insert(result, pandoc.RawBlock(FORMAT, '['))
+                  table.insert(result, block)
+                  table.insert(result, pandoc.RawBlock(FORMAT, '],'))
+               end
+
+               table.insert(result, pandoc.RawBlock(FORMAT, ')'))
+            
             elseif block.t == "Para" then
                local str_content = pandoc.utils.stringify(block.c)
 
                if str_content:match('^%^ ') then
                   ; -- Don't output presenter notes
 
-               elseif (block.t == "Para"
-                       and #block.c > 0 -- empty paras can, e.g., be caused by presentation-only images
+               elseif (#block.c > 0 -- empty paras can, e.g., be caused by presentation-only images
                        and block.c[1].t == "Superscript" and #block.c[1].c == 0) then
                   -- "Dual-use" presenter notes
 
@@ -329,6 +422,9 @@ function format_slides (elem)
                   -- insert them into the #fslide(caption: [...])
                   local tmpdoc = pandoc.Pandoc( { pandoc.Para(slice(block.content, 3)) } )
                   caption = pandoc.write(tmpdoc, 'typst')
+
+               elseif str_content:match('^. . .%s*$') then
+                  ; -- Don't output Pandoc-native pauses
                   
                elseif str_content:match('^%[%.column]%s*$') then
                   -- Deckset [.column] command
@@ -431,7 +527,7 @@ function add_setup_code (meta)
       -- Define a counter for slides
 
       setup_code = [[
-\usepackage[skins]{tcolorbox}
+\usepackage[skins, raster]{tcolorbox}
 \newtcolorbox{embed-slide}[2][]{%
   colframe=orange, colback=orange!8!white,
   fonttitle=\footnotesize\sffamily\bfseries,
@@ -540,7 +636,15 @@ function handle_tags (el)
    end
 end
 
-      
+function foobar (el)
+   print("foobar: ", el.t)
+   if el.classes:includes('column') then
+      --return pandoc.List({pandoc.RawBlock(FORMAT, '#colbreak()') , el.c[1] })
+      return pandoc.Para('Foobar ' .. el.t .. '/' .. el.classes[1])
+   else
+      return nil
+   end
+end
 
 return {
    { Meta  = add_setup_code },
