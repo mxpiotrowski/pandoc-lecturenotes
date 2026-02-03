@@ -153,6 +153,8 @@ Prefix the author of the quote with `--`, or leave it out if it's anonymous.
 
 ## Links
 
+<!--
+
 ::: slide
 # Link to External Resources
 <a name="link-target"/>
@@ -179,6 +181,8 @@ Define an anchor on the slide you want to link to using standard HTML syntax:
 
 Then you can link to this [slide](#link-target) easily.
 :::
+
+-->
 
 ## Code Blocks
 
@@ -363,6 +367,8 @@ $$
 ## Emojis
 
 This works in Deckset but isn’t currently converted to LaTeX or ms, even thought it should be easy to do (i.e., outputting the corresponding Unicode code point).
+
+Typst supports named emoji, but the names are different… (see [Emoji Symbols](https://typst.app/docs/reference/symbols/emoji/)).
 
 ::: slide
 # Emojis
