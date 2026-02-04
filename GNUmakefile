@@ -4,6 +4,7 @@ BIB=references.bib
 	pandoc -s -f markdown-implicit_figures \
 	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars+hard_line_breaks \
 	-o $@ \
+	--default-image-extension=jpg \
 	--wrap=none --strip-comments=true \
 	--bibliography=${BIB} \
 	-L filters/deckset-slides.lua \

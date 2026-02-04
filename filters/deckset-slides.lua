@@ -237,6 +237,21 @@ function Figure (el)
 end
 
 function Image (el)
+   -- If the Pandoc default-image-extension option is used, the
+   -- default image extension is also appended to URLs.  This breaks
+   -- YouTube embeds.  We specifically check for YouTube (because the
+   -- issue doesn't concern URLs in general) and remove the
+   -- "extension" if it matches the default image extension.
+   if PANDOC_READER_OPTIONS.default_image_extension then
+      if el.src:match('youtube.com/watch') or el.src:match('youtu.be/') then
+         local path, ext = pandoc.path.split_extension(el.src)
+
+         if ext:match(PANDOC_READER_OPTIONS.default_image_extension) then
+            el.src = path
+         end
+      end
+   end
+
    if el.classes:includes('lecturenotes')  then
       -- Exclude images with the .lecturenotes class.
       return {}
