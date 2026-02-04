@@ -2,7 +2,7 @@ BIB=references.bib
 
 %-deckset.md: %.md filters/deckset-slides.lua
 	pandoc -s -f markdown-implicit_figures \
-	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars \
+	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars+hard_line_breaks \
 	-o $@ \
 	--wrap=none --strip-comments=true \
 	--bibliography=${BIB} \
