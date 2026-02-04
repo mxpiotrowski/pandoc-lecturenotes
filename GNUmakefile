@@ -58,4 +58,4 @@ BIB=references.bib
 .PHONY: clean
 
 clean:
-	rm -f *-deckset.md *-{latex,ms}.pdf *.html *~
+	rm -f *-deckset.md *-{latex,ms,typst}.pdf *.html *~
