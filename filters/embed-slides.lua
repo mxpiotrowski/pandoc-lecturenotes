@@ -438,6 +438,15 @@ function format_slides (elem)
                   colbreaks = colbreaks + 1
                elseif str_content:match('^%[%.[-%a]+') then
                   ; -- Don't output Deckset per-slide commands
+
+               elseif #block.c == 1 and block.c[1].t == "RawInline"
+                  and block.c[1].format == 'html' then
+                  -- Deckset uses HTML syntax for defining anchors.
+                  -- Move the anchor name to the ID attribute of the
+                  -- slide div.
+                  local target = block.c[1].text:match('^<a name="(.+)"/>')
+                  if target then elem.identifier = target end
+                     
                else
                   table.insert(result, block)
                end
@@ -632,17 +641,14 @@ end
 
 function handle_tags (el)
    if el.format == 'html' and el.text == '<br>' then
-      return pandoc.LineBreak()
-   end
-end
-
-function foobar (el)
-   print("foobar: ", el.t)
-   if el.classes:includes('column') then
-      --return pandoc.List({pandoc.RawBlock(FORMAT, '#colbreak()') , el.c[1] })
-      return pandoc.Para('Foobar ' .. el.t .. '/' .. el.classes[1])
-   else
-      return nil
+      if FORMAT == 'typst' then
+         -- Workaround for what seems to be a bug in Pandoc [TODO]
+         -- pandoc.LineBreak() results in *two* linebreaks: \ and a
+         -- literal one
+         return pandoc.RawInline(FORMAT, '#linebreak()')
+      else
+         return pandoc.LineBreak()
+      end
    end
 end
 
