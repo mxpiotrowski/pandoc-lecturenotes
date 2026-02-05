@@ -642,14 +642,14 @@ end
 function handle_tags (el)
    if el.format == 'html' and el.text == '<br>' then
       if FORMAT == 'typst' then
-         -- Workaround for what seems to be a bug in Pandoc [TODO]
-         -- pandoc.LineBreak() results in *two* linebreaks: \ and a
-         -- literal one
+         -- Workaround for [BUG] https://github.com/jgm/pandoc/issues/11446
          return pandoc.RawInline(FORMAT, '#linebreak()')
       else
          return pandoc.LineBreak()
       end
    end
+
+   return nil
 end
 
 return {
