@@ -58,10 +58,26 @@ function format_slides (elem)
    if elem.classes:includes('slide') and showslides == true then
 
       if FORMAT:match 'latex' then -- LaTeX
+         local split = {}
          local colbreaks = 0
-         
-         add_raw_block(result, FORMAT, '\\addtocounter{slidectr}{1}')
-         add_raw_block(result, FORMAT, '\\begin{embed-slide}{Slide~\\theslidectr}')
+
+         -- Check for split slide; remove image from list of blocks
+            
+         for i, block in ipairs(elem.content) do
+            if (block.t == "Para" and #block.c == 1 and block.c[1].t == 'Image') then
+               local opt_str = pandoc.utils.stringify(block.c[1].caption)
+               local options = pandoc.List({})
+               for str in opt_str:gmatch("([^%s]+)") do table.insert(options, str) end
+           
+               if options:includes('left') then
+                  split['left'] = table.remove(elem.content, i)
+               end
+
+               if options:includes('right') then
+                  split['right'] = table.remove(elem.content, i)
+               end
+            end
+         end
 
          -- Output link anchor if the slide has an ID attribute
          if elem.identifier ~= '' then
@@ -147,8 +163,6 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
-               -- table.insert(result, pandoc.HorizontalRule())
-               --vv
 
                   if colbreaks == 0 then -- start of the first column
                      add_raw_block(result, FORMAT, "// START COLUMNS")
@@ -158,8 +172,6 @@ function format_slides (elem)
             
                   colbreaks = colbreaks + 1
 
-
-               --^^
             elseif (el.t == "Div" and
                     el.classes:includes("columns")) then
                -- Handle native columns
@@ -201,48 +213,6 @@ function format_slides (elem)
                if target then
                   add_raw_block(result, FORMAT, '\\hypertarget{' .. target .. '}{}')
                end
-            elseif (el.t == "Para" and #el.c == 1 and el.c[1].t == "Image") then
-               -- With the implicit_figures extension active, an image
-               -- with nonempty alt text, occurring by itself in a
-               -- paragraph, will be rendered as a figure with a
-               -- caption.  The image’s alt text will be used as the
-               -- caption.  (↗ <https://pandoc.org/MANUAL.html#extension-implicit_figures>)
-               
-               -- This is not a good idea inside slides, because (1)
-               -- the alt text is only intended for Deckset (which
-               -- uses it for options) and (2) the resulting LaTeX
-               -- fails to compile due to having a figure (= float)
-               -- inside the tcolorbox (and even if one used a
-               -- different layout, it wouldn't make sense for slides
-               -- to contain floats).
-
-               -- Experimental: put an image with the "right" option
-               -- in the "lower" part of the tcolorbox and set the
-               -- "sidebyside" option on the slide.  The image should
-               -- be the last element on the slide, otherwise the rest
-               -- of the content will also end up on the right side.
-               -- This is a bit hackish as it relies on the fact that
-               -- the \begin{embed-slide} is the second item in the
-               -- result table.
-               if el.c[1].caption and
-                  string.match(pandoc.utils.stringify(el.c[1].caption), 'right') then
-                  add_raw_block(result, FORMAT, '\\tcblower')
-                  result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
-               end
-
-               -- Unset the title to prevent the creation of a figure
-               -- and insert the element.
-               el.c[1].title = ''
-               table.insert(result, el)
-
-               -- The same as above, but for images with the "left"
-               -- option.  In this case, the image should be the first
-               -- element on the slide.
-               if el.c[1].caption
-                  and string.match(pandoc.utils.stringify(el.c[1].caption), 'left') then
-                  add_raw_block(result, FORMAT, '\\tcblower')
-                  result[2] = pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}')
-               end
             elseif (el.t == "Figure") then
                table.insert(result, el.c[1])
             else
@@ -251,6 +221,26 @@ function format_slides (elem)
          end
 
          -- Finish the slide
+
+         table.insert(result, 1, pandoc.RawBlock(FORMAT, '\\addtocounter{slidectr}{1}'))
+         
+         if split['left'] then
+            -- Insert setup and image at the beginning of result
+                       
+            for i, stuff in ipairs { pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}'),
+                                     split['left'],
+                                     pandoc.RawBlock(FORMAT, '\\tcblower') } do
+               table.insert(result, i, stuff)
+            end
+         elseif split['right'] then
+            -- Insert setup at the beginning…
+            table.insert(result, 1, pandoc.RawBlock(FORMAT, '\\begin{embed-slide}[sidebyside, sidebyside align=top seam]{Slide~\\theslidectr}'))
+            -- … and image at the end of result
+            add_raw_block(result, FORMAT, '\\tcblower')
+            table.insert(result, split['right'])
+         else
+            table.insert(result, 1, pandoc.RawBlock(FORMAT, '\\begin{embed-slide}{Slide~\\theslidectr}'))
+         end
 
          if colbreaks > 0 then
             for i, block in ipairs(result) do
