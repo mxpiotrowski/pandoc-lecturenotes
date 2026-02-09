@@ -153,6 +153,8 @@ Prefix the author of the quote with `--`, or leave it out if it's anonymous.
 
 ## Links
 
+<!--
+
 ::: slide
 # Link to External Resources
 <a name="link-target"/>
@@ -179,6 +181,8 @@ Define an anchor on the slide you want to link to using standard HTML syntax:
 
 Then you can link to this [slide](#link-target) easily.
 :::
+
+-->
 
 ## Code Blocks
 
@@ -364,6 +368,8 @@ $$
 
 This works in Deckset but isn’t currently converted to LaTeX or ms, even thought it should be easy to do (i.e., outputting the corresponding Unicode code point).
 
+Typst supports named emoji, but the names are different… (see [Emoji Symbols](https://typst.app/docs/reference/symbols/emoji/)).
+
 ::: slide
 # Emojis
 
@@ -458,7 +464,7 @@ on the first line of your markdown file.
 
 ## Columns
 
-Converting this to LaTeX or ms would be a major effort.  Instead, columns are rendered vertically.
+Columns can easily be converted to Typst, but it would be a major effort in LaTeX or ms.  In these formats, columns are rendered vertically.
 
 ::: slide
 # Columns
@@ -502,6 +508,7 @@ Multiple Background Images.  Deckset doesn’t require that each image is a sepa
 Also, this does not easily convert to LaTeX or ms—this is essentially the same problem as with multiple columns.
 
 ::: slide
+
 ![](assets/image1)
 
 ![](assets/image2)

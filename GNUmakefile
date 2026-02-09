@@ -3,6 +3,7 @@ BIB=references.bib
 %-deckset.md: %.md filters/deckset-slides.lua
 	pandoc -s -f markdown-implicit_figures \
 	-t commonmark+footnotes+pipe_tables+strikeout+tex_math_dollars+hard_line_breaks \
+	--default-image-extension=jpg \
 	-o $@ \
 	--default-image-extension=jpg \
 	--wrap=none --strip-comments=true \
@@ -41,6 +42,13 @@ BIB=references.bib
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=xelatex $<
 
+%.tex: %.md filters/embed-slides.lua
+	pandoc -s -f markdown-implicit_figures -t latex -o $@ \
+	--number-sections --default-image-extension=jpg \
+	-L filters/embed-slides.lua \
+	--citeproc --bibliography=${BIB} \
+	--pdf-engine=xelatex $<
+
 %-ms.pdf: %.md filters/embed-slides.lua
 	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
 	--number-sections --default-image-extension=eps \
@@ -48,6 +56,19 @@ BIB=references.bib
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=pdfroff --pdf-engine-opt=-dpaper=a4 \
 	--pdf-engine-opt=-U --pdf-engine-opt=-P-pa4 $<
+
+%-typst.pdf: %.md filters/embed-slides.lua
+	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
+	--number-sections --default-image-extension=jpg \
+	-L filters/embed-slides.lua \
+	--citeproc --bibliography=${BIB} \
+	--pdf-engine=typst $<
+
+%.typ: %.md filters/embed-slides.lua
+	pandoc -s -f markdown-implicit_figures -t typst -o $@ \
+	--number-sections --default-image-extension=jpg \
+	-L filters/embed-slides.lua \
+	--citeproc --bibliography=${BIB} $<
 
 %.html: %.md filters/embed-slides.lua embed-slides.css
 	pandoc -s -f markdown-implicit_figures -t html5 \
@@ -60,4 +81,4 @@ BIB=references.bib
 .PHONY: clean
 
 clean:
-	rm -f *-deckset.md *-{latex,ms}.pdf *.html *~
+	rm -f *-deckset.md *-{latex,ms,typst}.pdf *.html *~
