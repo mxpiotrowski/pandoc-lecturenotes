@@ -70,6 +70,10 @@ The `embed-slides.lua` filter aims to produce useful renderings of the slides, b
 
 The filters are compatible with the [`scholarly-metadata` filter](https://github.com/pandoc/lua-filters/tree/master/scholarly-metadata).
 
+## Installation
+
+In order to use the Lua filters (in the `filters` directory), Pandoc must be able to find them.  See the [Pandoc User’s Guide](https://pandoc.org/MANUAL.html#option--lua-filter) for details.
+
 ## Formatting `sample.md`
 
 The file `sample.md` is primarily for testing, but it illustrates most of the features (and limitations).  The slides assume Deckset, so producing slides in other formats will not necessarily produce useful results.
