@@ -58,6 +58,8 @@ function format_slides (elem)
    if elem.classes:includes('slide') and showslides == true then
 
       if FORMAT:match 'latex' then -- LaTeX
+         local colbreaks = 0
+         
          add_raw_block(result, FORMAT, '\\addtocounter{slidectr}{1}')
          add_raw_block(result, FORMAT, '\\begin{embed-slide}{Slide~\\theslidectr}')
 
@@ -145,7 +147,19 @@ function format_slides (elem)
             elseif (el.t == "Para" and
                     string.match(pandoc.utils.stringify(el), '^%[%.column]%s*$')) then
                -- Handle the Deckset [.column] command
-               table.insert(result, pandoc.HorizontalRule())
+               -- table.insert(result, pandoc.HorizontalRule())
+               --vv
+
+                  if colbreaks == 0 then -- start of the first column
+                     add_raw_block(result, FORMAT, "// START COLUMNS")
+                  else
+                     add_raw_block(result, FORMAT, "\\end{tcolorbox}\\begin{tcolorbox}")
+                  end
+            
+                  colbreaks = colbreaks + 1
+
+
+               --^^
             elseif (el.t == "Div" and
                     el.classes:includes("columns")) then
                -- Handle native columns
@@ -236,6 +250,20 @@ function format_slides (elem)
             end
          end
 
+         -- Finish the slide
+
+         if colbreaks > 0 then
+            for i, block in ipairs(result) do
+               if block.t == 'RawBlock' and block.text == '// START COLUMNS' then
+                  result[i] =
+                     pandoc.RawBlock(FORMAT, '\\begin{tcbraster}[raster columns='
+                                     .. colbreaks .. ']' .. '\\begin{tcolorbox}')
+               end
+            end
+
+            add_raw_block(result, FORMAT, '\\end{tcolorbox}\\end{tcbraster}')
+         end
+         
          add_raw_block(result, FORMAT, '\\end{embed-slide}')
 
 
