@@ -261,6 +261,15 @@ function Image (el)
    end
 end
 
+function Link(el)
+   if el.classes:includes('lecturenotes') then
+      -- Exclude links with the .lecturenotes class.
+      return {}
+   else
+      return nil
+   end
+end
+
 function Div (el)
    -- Exclude divs with the .lecturenotes class.
    if el.classes:includes("lecturenotes") then
@@ -297,7 +306,7 @@ end
 function Para (el)
    -- Handle "dual-use" presenter notes: replace an empty superscript
    -- at the beginning of a paragraph with "^"
-   if el.c[1].t == 'Superscript' and #el.c[1].c == 0 then
+   if #el.c > 0 and el.c[1].t == 'Superscript' and #el.c[1].c == 0 then
       el.c[1] = '^'
    end
    return el

@@ -31,6 +31,15 @@ function Image (el)
    end
 end
 
+function Link(el)
+   if el.classes:includes('lecturenotes') then
+      -- Exclude links with the .lecturenotes class.
+      return {}
+   else
+      return nil
+   end
+end
+
 function Div (el)
    -- Exclude Divs with the .lecturenotes class.
    if el.classes:includes("lecturenotes") then

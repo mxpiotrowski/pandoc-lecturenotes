@@ -679,7 +679,17 @@ function hide_unsupported_media (el)
    end
 end
 
+function handle_links(el)
+   if el.classes:includes('presentation') then
+      -- Exclude links with the .presentation class.
+      return {}
+   else
+      return nil
+   end
+end
+
 function handle_codeblocks (el)
+   -- Exclude code blocks with the .presentation class.
    if el.classes:includes('presentation')  then
       return {}
    end
@@ -702,8 +712,9 @@ end
 
 return {
    { Meta  = add_setup_code },
+   { Link = handle_links },
    { Image = hide_unsupported_media },
    { CodeBlock = handle_codeblocks },
-   { Div   = format_slides },
+   { Div = format_slides },
    { RawInline = handle_tags }
 }
