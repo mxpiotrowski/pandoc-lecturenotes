@@ -58,14 +58,14 @@ BIB=references.bib
 	--pdf-engine-opt=-U --pdf-engine-opt=-P-pa4 $<
 
 %-typst.pdf: %.md filters/embed-slides.lua
-	pandoc -s -f markdown-implicit_figures -t pdf -o $@ \
+	pandoc -s -f markdown-implicit_figures+emoji -t pdf -o $@ \
 	--number-sections --default-image-extension=jpg \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} \
 	--pdf-engine=typst $<
 
 %.typ: %.md filters/embed-slides.lua
-	pandoc -s -f markdown-implicit_figures -t typst -o $@ \
+	pandoc -s -f markdown-implicit_figures+emoji -t typst -o $@ \
 	--number-sections --default-image-extension=jpg \
 	-L filters/embed-slides.lua \
 	--citeproc --bibliography=${BIB} $<

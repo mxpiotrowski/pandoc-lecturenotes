@@ -366,9 +366,7 @@ $$
 
 ## Emojis
 
-This works in Deckset but isn’t currently converted to LaTeX or ms, even thought it should be easy to do (i.e., outputting the corresponding Unicode code point).
-
-Typst supports named emoji, but the names are different… (see [Emoji Symbols](https://typst.app/docs/reference/symbols/emoji/)).
+Deckset supports Slack style emojis, e.g.: `:sunny:` `:umbrella:` `:sunflower:` `:cat:` `:smile:`.  In order to render these in other output formats, you can use Pandoc’s `emoji` extension for the _source_ format (e.g., `-f markdown-implicit_figures+emoji`).  This will make Pandoc output the corresponding Unicode characters.  This should work out of the box in Typst and HTML; LaTeX and ms will need some setup.
 
 ::: slide
 # Emojis
