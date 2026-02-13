@@ -265,6 +265,10 @@ function Link(el)
    if el.classes:includes('lecturenotes') then
       -- Exclude links with the .lecturenotes class.
       return {}
+   elseif #el.classes > 0 then
+      -- Remove classes from links (not supported by Deckset)
+      el.classes = {}
+      return el
    else
       return nil
    end
