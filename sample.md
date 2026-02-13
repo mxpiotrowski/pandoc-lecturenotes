@@ -888,6 +888,8 @@ Slide headers are wrapped in a `\slideheader` macro with two arguments, the head
 
 ## Showing and Hiding Content
 
+If the metadata option `showslides` is false, all slides will be excluded from the notes.
+
 A slide with the class `presentation` will not appear in the notes:
 
 ```
@@ -896,7 +898,7 @@ Presentation only
 :::
 ```
 
-The classes `presentation` and `lecturenotes` can also be added to individual images (e.g., decorative backgrounds) and code blocks to prevent their inclusion in the lecture notes or the slides, respectively:
+The classes `presentation` and `lecturenotes` can also be added to individual images (e.g., decorative backgrounds), code blocks, and links to prevent their inclusion in the lecture notes or the slides, respectively:
 
 ```
 ::: slide
@@ -919,7 +921,15 @@ The classes `presentation` and `lecturenotes` can also be added to individual im
 ::::
 :::
 
-If the metadata option `showslides` is false, all slides will be excluded from the notes.
+In order to add attributes to links, use either the angle-brackets syntax (if it is just a URL) or the full format with a link text:
+
+::: slide
+On slides, you will see the URL of the Deckset home page, whereas you will see a link to the Typst home page (with the link text “Typst: The new foundation for documents”) in the lecture notes:
+
+<https://www.deckset.com/>{.presentation}
+
+[Typst: The new foundation for documents](https://typst.app/){.lecturenotes}
+:::
 
 ## Dual-Use Presenter Notes
 
