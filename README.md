@@ -61,7 +61,7 @@ This slide will only appear in the presentation.
 You can exclude _all_ slides from the lecture notes by setting the `showslides` metadata field to `false`.   You can also exclude images, divs, and code blocks from slides by adding the `lecturenotes` class; for example, this link will only appear in the lecture notes:
 
 ```
-![](https://youtu.be/…){.lecturenotes}
+<https://youtu.be/…>{.lecturenotes}
 ```
 
 This can be used to explicitly use different images for the presentation and the lecture notes.  But you can also use it, for example, to have Deckset include a video from the filesystem (so you don’t depend on a network connection for the presentation) and to include a YouTube link on the lecture notes.
