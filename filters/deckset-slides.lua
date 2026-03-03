@@ -101,6 +101,12 @@ function Pandoc (doc)
                                   doc.meta.institute[tonumber(b)].name))
                end
 
+               -- If the table of affiliations is empty, the
+               -- affiliation may be found in the affiliation field
+               if #aff == 0 and entry.affiliation then
+                  table.insert(aff, pandoc.utils.stringify(entry.affiliation))
+               end
+
                if #aff > 0 then
                   aff_str = table.concat(aff, '; ')
                end
