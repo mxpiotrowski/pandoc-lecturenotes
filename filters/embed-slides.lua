@@ -384,7 +384,7 @@ function format_slides (elem)
          local result = {}
          local split = {}
          local colbreaks = 0
-         local caption = nil
+         local captions = {}
 
          -- Check for split slide; remove image from list of blocks
             
@@ -464,13 +464,8 @@ function format_slides (elem)
                elseif (#block.c > 0 -- empty paras can, e.g., be caused by presentation-only images
                        and block.c[1].t == "Superscript" and #block.c[1].c == 0) then
                   -- "Dual-use" presenter notes
-
-                  -- [TODO] It may be better to store the notes as
-                  -- Pandoc objects and only render them when we
-                  -- insert them into the #fslide(caption: [...])
-                  local tmpdoc = pandoc.Pandoc( { pandoc.Para(slice(block.content, 3)) } )
-                  caption = pandoc.write(tmpdoc, 'typst')
-                  caption = block.c
+                  table.remove(block.c, 1) -- remove the marker
+                  table.insert(captions, block.c)
 
                elseif str_content:match('^. . .%s*$') then
                   ; -- Don't output Pandoc-native pauses
@@ -535,23 +530,17 @@ function format_slides (elem)
             add_raw_block(result, FORMAT, "]") -- close #columns()
          end
 
-         -- start slide
-         -- table.insert(result, 1,
-         --              pandoc.RawBlock(FORMAT, '#fslide(caption: '
-         --                              .. (caption
-         --                                  and ('[' .. caption .. ']')
-         --                                  or 'none') .. ')['))
-         
-         -- add_raw_block(result, FORMAT, ']') -- end slide
+         table.insert(result, 1, pandoc.RawBlock(FORMAT, '#figure(kind: "mslide",'))
+         table.insert(result, 2, pandoc.RawBlock(FORMAT, ')['))
 
-         -- if elem.identifier ~= '' then
-         --    add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
-         -- end
+         if #captions > 0 then
+            table.insert(result, 2, pandoc.RawBlock(FORMAT, 'caption: ['))
+            for i, c in ipairs(captions) do
+               table.insert(result, 2 + i, pandoc.Para(c))
+            end
+            table.insert(result, 3 + #captions, pandoc.RawBlock(FORMAT, ']'))
+         end
 
-         table.insert(result, 1, pandoc.RawBlock(FORMAT, '#figure(kind: "nslide", supplement: "Nslide",'))
-         table.insert(result, 2, pandoc.RawBlock(FORMAT, 'caption: ['))
-         table.insert(result, 3, pandoc.Para(caption))
-         table.insert(result, 4, pandoc.RawBlock(FORMAT, '],)['))
          add_raw_block(result, FORMAT, ']') -- end slide
          
          return result
@@ -618,26 +607,28 @@ function add_setup_code (meta)
          '.\\" Added by ' .. PANDOC_SCRIPT_FILE .. '\n' .. setup_code
    elseif FORMAT:match 'typst' then
       setup_code = [[
-#let fslide(body, fill: luma(230), label: "Slide", caption: none) = {
-    let slideheader(it) = block(fill: orange, inset: .25em, height: 1.5em, radius: .25em)[
-        #align(horizon)[
-            *#label #context counter(figure.where(kind: "fslide")).display()*
-        ]
-    ]
-
-    figure(kind: "fslide", caption: caption, supplement: [Slide],
-           rect(
-               width: 100%,
-               fill: fill,
-               inset: 0mm,
-               radius: .25em,
-               [#set align(left);
-                #set heading(outlined: false, numbering: none) // Don’t list slide headers in PDF TOC
-
-                #slideheader[];
-                #block(above: 0mm, inset: 1em, body)],
-    ))
+#show figure.where(kind: "mslide"): set figure(supplement: [Slide])
+#show figure.where(kind: "mslide"): set align(left)
+#show figure.where(kind: "mslide"): set figure.caption(position: bottom)
+#show figure.where(kind: "mslide"): it => {
+    rect(width: 100%, fill: luma(230), radius: .25em,
+         [
+             #set heading(outlined: false, numbering: none)
+             #block(fill: orange, inset: .25em, height: 1.5em, radius: .25em)[
+                 #align(horizon)[
+                     *#it.supplement #context counter(figure.where(kind: "mslide")).display()*
+                 ]
+             ]
+             #it]
+         )
 }
+#show figure.caption.where(kind: "mslide"): it => [
+    #align(left)[
+        #line(length: 100%, stroke: (paint: white))
+        #emph[#it.body]
+    ]
+]
+
 ]]
    end
 
