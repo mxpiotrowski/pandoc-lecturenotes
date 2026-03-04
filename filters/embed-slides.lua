@@ -470,6 +470,7 @@ function format_slides (elem)
                   -- insert them into the #fslide(caption: [...])
                   local tmpdoc = pandoc.Pandoc( { pandoc.Para(slice(block.content, 3)) } )
                   caption = pandoc.write(tmpdoc, 'typst')
+                  caption = block.c
 
                elseif str_content:match('^. . .%s*$') then
                   ; -- Don't output Pandoc-native pauses
@@ -535,18 +536,24 @@ function format_slides (elem)
          end
 
          -- start slide
-         table.insert(result, 1,
-                      pandoc.RawBlock(FORMAT, '#fslide(caption: '
-                                      .. (caption
-                                          and ('[' .. caption .. ']')
-                                          or 'none') .. ')['))
+         -- table.insert(result, 1,
+         --              pandoc.RawBlock(FORMAT, '#fslide(caption: '
+         --                              .. (caption
+         --                                  and ('[' .. caption .. ']')
+         --                                  or 'none') .. ')['))
          
+         -- add_raw_block(result, FORMAT, ']') -- end slide
+
+         -- if elem.identifier ~= '' then
+         --    add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
+         -- end
+
+         table.insert(result, 1, pandoc.RawBlock(FORMAT, '#figure(kind: "nslide", supplement: "Nslide",'))
+         table.insert(result, 2, pandoc.RawBlock(FORMAT, 'caption: ['))
+         table.insert(result, 3, pandoc.Para(caption))
+         table.insert(result, 4, pandoc.RawBlock(FORMAT, '],)['))
          add_raw_block(result, FORMAT, ']') -- end slide
-
-         if elem.identifier ~= '' then
-            add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
-         end
-
+         
          return result
       end
       
