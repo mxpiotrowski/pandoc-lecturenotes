@@ -323,12 +323,11 @@ function Para (el)
 end
 
 function Span (el)
-   if el.classes:includes("alert") then
-      -- Replace spans with the "alert" class (think Beamer) with
-      -- Deckset-style "combined emphasis" markup (which may or may not be
-      -- different from regular bold or italics).
-      table.insert(el.content, 1, pandoc.RawInline('markdown', '_**'))
-      table.insert(el.content, pandoc.RawInline('markdown', '**_'))
+   if el.classes:includes("alert") or el.classes:includes("mark") then
+      -- Requires Deckset 2.0.49
+      -- [TODO] Make color customizable
+      table.insert(el.content, 1, pandoc.RawInline('markdown', '<span style="color: #FFFF33">'))
+      table.insert(el.content, pandoc.RawInline('markdown', '</span>'))
       return el.content
    end
 
