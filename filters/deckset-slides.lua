@@ -323,7 +323,7 @@ function Para (el)
 end
 
 function Span (el)
-   if el.classes:includes("alert") or el.classes:includes("mark") then
+   if el.classes:includes("mark") then
       -- Requires Deckset 2.0.49
       -- [TODO] Make color customizable
       table.insert(el.content, 1, pandoc.RawInline('markdown', '<span style="color: #FFFF33">'))

@@ -760,25 +760,46 @@ would insert the following configuration commands into the Deckset file:
 
 See the Deckset documentation for the available commands.
 
-## Alerted text
+## Highlighted text
 
-The `deckset-slides.lua` filter converts spans with the class *alert* to Deckset-style combined emphasis (currently `_**…**_`).  According to the Deckset documentation, “some themes have additional style options for those combinations.”  Thus, depending on the theme, alerted text may or may not be actually highlighted.
+Pandoc natively renders spans with the class `mark` as highlighted text, for example,
+
+``` markdown
+This is [highlighted]{.mark} text.
+```
+
+is rendered as:
+
+> This is [highlighted]{.mark} text.
+
+When the the Pandoc `mark` extension is active, this can be written as
+
+``` markdown
+This is ==highlighted== text.
+```
+
+Starting with version 2.0.49, Deckset supports HTML spans with a small subset of CSS.  The `deckset-slides.lua` filter converts spans with the class `mark` into colored text (the color can’t currently be customized).
 
 ::: slide
-# Alerted Text
+# Highlighted Text
 
-It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
-
-(Depending on the theme, the passage “they remain fundamentally unresolvable” may or may not be highlighted.)
+It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.mark}.
 :::
 
 ::: slide
-# Alerted Text in a Quotation
+# Highlighted Text in a Quotation
 
-> It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.alert}.
-
-(Depending on the theme, the passage “they remain fundamentally unresolvable” may or may not be highlighted.)
+> It is the argument of this book that not only are these conflicts still not resolved, but [they remain fundamentally unresolvable]{.mark}.
 :::
+
+::: slide
+# Highlighted Text Using the `mark` Extension
+
+> It is the argument of this book that not only are these conflicts still not resolved, but ==they remain fundamentally unresolvable==.
+
+If the `mark` extension is active, the above passage should look identical to the one on the previous slide.
+:::
+
 
 ## Global Configuration Commands as Metadata Options
 
