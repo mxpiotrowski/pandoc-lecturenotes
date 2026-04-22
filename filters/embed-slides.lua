@@ -472,6 +472,7 @@ function format_slides (elem)
                   
                elseif str_content:match('^%[%.column]%s*$') then
                   -- Deckset [.column] command
+                  -- [TODO] Uneven columns
                   
                   if colbreaks == 0 then -- start of the first column
                      add_raw_block(result, FORMAT, "// START COLUMNS")
@@ -542,6 +543,11 @@ function format_slides (elem)
          end
 
          add_raw_block(result, FORMAT, ']') -- end slide
+
+         -- Output link anchor if the slide has an ID attribute
+         if elem.identifier ~= '' then
+            add_raw_block(result, FORMAT, '<' .. elem.identifier .. '>')
+         end
          
          return result
       end
