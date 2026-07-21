@@ -1,5 +1,8 @@
 # pandoc-lecturenotes
 
+> [!NOTE]
+> This package is now hosted on [Codeberg](https://codeberg.org/mxpi/pandoc-lecturenotes).
+
 This is a set of filters for single-source publishing of teaching material, or, in other words, for producing both slides and lecture notes (with or without embedded slides) from a single Markdown source document.  The idea is similar to, e.g., `beamerarticle` but aims to be lightweight; see [pandoc-lecturenotes and the Quest for More Efficient Professoring](https://dynalabs.de/mxp/blog/2025-12-29) for a longer description.
 
 Slides can be produced for any of the slide formats supported by Pandoc—see the [Pandoc User’s Guide](https://pandoc.org/MANUAL.html#slide-shows)—or [Deckset](https://www.deckset.com/)).  Lecture notes (in PDF) can be formatted with LaTeX, Typst, or—with limitations—**ms**.
